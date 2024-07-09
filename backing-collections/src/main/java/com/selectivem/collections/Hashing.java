@@ -20,7 +20,7 @@ abstract class Hashing {
     static final int COLLISION_HEAD_ROOM = 10;
     static final int NO_SPACE = Integer.MAX_VALUE;
 
-    static final int hashPosition(int tableSize, Object e) {
+    static int hashPosition(int tableSize, Object e) {
         if (e == null) {
             throw new IllegalArgumentException("null values are not supported");
         }
@@ -49,11 +49,11 @@ abstract class Hashing {
         }
     }
 
-    static final int hashTo8bit(int hash) {
+    static int hashTo8bit(int hash) {
         return (hash & 0xff) ^ (hash >> 8 & 0xff) ^ (hash >> 16 & 0xff) ^ (hash >> 24 & 0xff);
     }
 
-    static final int hashTableSize(int elementCount) {
+    static int hashTableSize(int elementCount) {
         if (elementCount <= 10) {
             return 16;
         } else if (elementCount <= 50) {
@@ -69,7 +69,7 @@ abstract class Hashing {
         }
     }
 
-    static final int nextSize(int tableSize) {
+    static int nextSize(int tableSize) {
         switch (tableSize) {
             case 16:
                 return 64;
@@ -90,7 +90,7 @@ abstract class Hashing {
      * Returns NO_SPACE if it cannot be inserted. If it returns a value >= 0, it is not contained and can be inserted at
      * the given position. If it returns a value < 0, the actual position can be calculated as -returnValue - 1.
      */
-    static final <E> int checkTable(E[] table, Object e, int hashPosition) {
+    static <E> int checkTable(E[] table, Object e, int hashPosition) {
         if (table[hashPosition] == null) {
             return hashPosition;
         } else if (table[hashPosition].equals(e)) {

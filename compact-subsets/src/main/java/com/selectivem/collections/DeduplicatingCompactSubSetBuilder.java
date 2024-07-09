@@ -180,17 +180,6 @@ public class DeduplicatingCompactSubSetBuilder<E> {
             root.estimatedObjectOverheadSize += 36;
         }
 
-        boolean offer(E element) {
-            if (offeredElement == null) {
-                offeredElement = element;
-                return true;
-            } else if (element.equals(offeredElement)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
         BackingBitSetBuilder<E> branchOff() {
             if (this.copyWithNone == null) {
                 this.copyWithNone = this.copy();
