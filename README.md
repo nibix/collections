@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/nibix/checklists/graph/badge.svg?token=957EGPZ5OE)](https://codecov.io/gh/nibix/checklists)
+[![codecov](https://codecov.io/gh/nibix/collections/graph/badge.svg?token=IE4URKDA1A)](https://codecov.io/gh/nibix/collections)
 
 # com.selectiveminimalism.collections
 
