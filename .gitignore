@@ -1,0 +1,9 @@
+/target/
+/.project
+/.classpath
+/.settings/
+/settings.xml
+/checklists/target/
+/backing-collections/target/
+/compact-subsets/target/
+/interfaces/target/

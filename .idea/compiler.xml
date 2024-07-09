@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Annotation profile for checklists" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <option name="project" value="com.selectivem.collections/checklists" />
+        <module name="checklists" />
+      </profile>
+      <profile name="Annotation profile for compact-subsets" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <option name="project" value="com.selectivem.collections/compact-subsets" />
+        <module name="compact-subsets" />
+      </profile>
+      <profile name="Annotation profile for interfaces" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <option name="project" value="com.selectivem.collections/interfaces" />
+        <module name="interfaces" />
+      </profile>
+      <profile name="Annotation profile for com.selectivem.collections:collections" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <option name="project" value="com.selectivem.collections/backing-collections" />
+        <module name="backing-collections" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="build-infra" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="backing-collections" options="-Aproject=com.selectivem.collections/backing-collections" />
+      <module name="build-infra" options="-Aproject=com.selectivem.collections/build-infra" />
+      <module name="checklists" options="-Aproject=com.selectivem.collections/checklists" />
+      <module name="collections" options="-Aproject=com.selectivem.collections/collections" />
+      <module name="compact-subsets" options="-Aproject=com.selectivem.collections/compact-subsets" />
+      <module name="interfaces" options="-Aproject=com.selectivem.collections/interfaces" />
+    </option>
+  </component>
+</project>
