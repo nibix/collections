@@ -158,7 +158,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
     }
 
-    static final class OneElementSet<E> extends IndexedImmutableSetImpl<E> {
+    static class OneElementSet<E> extends IndexedImmutableSetImpl<E> {
 
         private final E element;
 
@@ -240,7 +240,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
     }
 
-    static final class TwoElementSet<E> extends IndexedImmutableSetImpl<E> {
+    static class TwoElementSet<E> extends IndexedImmutableSetImpl<E> {
 
         private final E e1;
         private final E e2;

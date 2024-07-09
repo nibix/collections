@@ -17,9 +17,8 @@ package com.selectivem.collections;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
-abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Set<E> {
+abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements ImmutableCompactSubSet<E> {
 
     static final class LongArrayBacked<E> extends BitBackedSetImpl<E> {
         private final long[] bits;

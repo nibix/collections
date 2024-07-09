@@ -107,13 +107,13 @@ public class DeduplicatingCompactSubSetBuilder<E> {
             this.lastAddedElement = element;
         }
 
-        public Set<E> build(DeduplicatingCompactSubSetBuilder.Completed<E> completed) {
+        public ImmutableCompactSubSet<E> build(DeduplicatingCompactSubSetBuilder.Completed<E> completed) {
             if (completed.root != this.root) {
                 throw new IllegalArgumentException("Called for the wrong DeduplicatingCompactSubSetBuilder");
             }
 
             if (backingCollection == null) {
-                return IndexedImmutableSetImpl.empty();
+                return ImmutableCompactSubSetImpl.empty();
             } else {
                 return backingCollection.build();
             }
@@ -151,10 +151,12 @@ public class DeduplicatingCompactSubSetBuilder<E> {
         private final int bitArrayOffset;
         private BackingBitSetBuilder<E> copyWithNone;
         private final DeduplicatingCompactSubSetBuilder<E> root;
-        private Set<E> finalBuildResult;
+        private ImmutableCompactSubSet<E> finalBuildResult;
+        private E firstElement;
 
         BackingBitSetBuilder(E element, DeduplicatingCompactSubSetBuilder<E> root) {
             this.elementToIndexMap = root.candidateElements;
+            this.firstElement = element;
             this.size = 1;
             int index = elementToIndexMap.elementToIndex(element);
             long bit = 1l << (index & 0x3f);
@@ -170,6 +172,7 @@ public class DeduplicatingCompactSubSetBuilder<E> {
 
         BackingBitSetBuilder(BackingBitSetBuilder<E> original) {
             this.elementToIndexMap = original.elementToIndexMap;
+            this.firstElement = original.firstElement;
             this.bits = new long[original.bits.length];
             this.size = original.size;
             this.bitArrayOffset = original.bitArrayOffset;
@@ -212,32 +215,42 @@ public class DeduplicatingCompactSubSetBuilder<E> {
 
             this.bits[arrayIndex] |= bit;
             this.size++;
+
+            if (this.firstElement == null) {
+                this.firstElement = element;
+            }
         }
 
         BackingBitSetBuilder<E> copy() {
             return new BackingBitSetBuilder<>(this);
         }
 
-        Set<E> build() {
+        ImmutableCompactSubSet<E> build() {
             if (this.finalBuildResult != null) {
                 return this.finalBuildResult;
             }
 
-            long[] bits = this.bits;
-            int lastNonZeroIndex = lastNonZeroIndex(bits);
-
-            if (lastNonZeroIndex <= 0) {
-                this.finalBuildResult =
-                        new BitBackedSetImpl.LongBacked<>(bits[0], size, elementToIndexMap, bitArrayOffset);
+            if (this.size == this.elementToIndexMap.size()) {
+                this.finalBuildResult = ImmutableCompactSubSetImpl.of(this.elementToIndexMap);
+            } else if (this.size == 1) {
+                this.finalBuildResult = ImmutableCompactSubSetImpl.of(IndexedImmutableSetImpl.of(this.firstElement));
             } else {
-                if (lastNonZeroIndex != bits.length - 1) {
-                    long[] shortenedBits = new long[lastNonZeroIndex + 1];
-                    System.arraycopy(bits, 0, shortenedBits, 0, shortenedBits.length);
-                    bits = shortenedBits;
-                }
+                long[] bits = this.bits;
+                int lastNonZeroIndex = lastNonZeroIndex(bits);
 
-                this.finalBuildResult =
-                        new BitBackedSetImpl.LongArrayBacked<>(bits, size, elementToIndexMap, bitArrayOffset);
+                if (lastNonZeroIndex <= 0) {
+                    this.finalBuildResult =
+                            new BitBackedSetImpl.LongBacked<>(bits[0], size, elementToIndexMap, bitArrayOffset);
+                } else {
+                    if (lastNonZeroIndex != bits.length - 1) {
+                        long[] shortenedBits = new long[lastNonZeroIndex + 1];
+                        System.arraycopy(bits, 0, shortenedBits, 0, shortenedBits.length);
+                        bits = shortenedBits;
+                    }
+
+                    this.finalBuildResult =
+                            new BitBackedSetImpl.LongArrayBacked<>(bits, size, elementToIndexMap, bitArrayOffset);
+                }
             }
 
             return this.finalBuildResult;
