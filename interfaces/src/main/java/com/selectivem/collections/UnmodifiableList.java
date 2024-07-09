@@ -98,27 +98,4 @@ public interface UnmodifiableList<E> extends UnmodifiableCollection<E>, List<E> 
         throw new UnsupportedOperationException();
     }
 
-    @Deprecated
-    @Override
-    default void addFirst(E e) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    @Override
-    default void addLast(E e) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    @Override
-    default E removeFirst() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    @Override
-    default E removeLast() {
-        throw new UnsupportedOperationException();
-    }
 }
