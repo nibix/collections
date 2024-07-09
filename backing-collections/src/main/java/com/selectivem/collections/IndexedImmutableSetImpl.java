@@ -423,9 +423,6 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
 
     static final class HashArrayBackedSet<E> extends IndexedImmutableSetImpl<E> {
 
-        private static final int COLLISION_HEAD_ROOM = 10;
-        private static final int NO_SPACE = Integer.MAX_VALUE;
-
         final int tableSize;
         private final int size;
 
@@ -467,7 +464,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                 return indices[hashPosition];
             }
 
-            int max = hashPosition + COLLISION_HEAD_ROOM;
+            int max = hashPosition + Hashing.COLLISION_HEAD_ROOM;
 
             for (int i = hashPosition + 1; i <= max; i++) {
                 if (table[i] == null) {
@@ -529,27 +526,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         int checkTable(Object e, int hashPosition) {
-            return checkTable(table, e, hashPosition);
-        }
-
-        static <E> int checkTable(E[] table, Object e, int hashPosition) {
-            if (table[hashPosition] == null) {
-                return hashPosition;
-            } else if (table[hashPosition].equals(e)) {
-                return -1 - hashPosition;
-            }
-
-            int max = hashPosition + COLLISION_HEAD_ROOM;
-
-            for (int i = hashPosition + 1; i <= max; i++) {
-                if (table[i] == null) {
-                    return i;
-                } else if (table[i].equals(e)) {
-                    return -1 - i;
-                }
-            }
-
-            return NO_SPACE;
+            return Hashing.checkTable(table, e, hashPosition);
         }
 
         static class Builder<E> extends IndexedImmutableSetImpl.InternalBuilder<E> {
@@ -577,8 +554,8 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
 
                 if (table == null) {
                     int hashPosition = hashPosition(e);
-                    table = GenericArrays.create(tableSize + COLLISION_HEAD_ROOM);
-                    indices = new short[tableSize + COLLISION_HEAD_ROOM];
+                    table = GenericArrays.create(tableSize + Hashing.COLLISION_HEAD_ROOM);
+                    indices = new short[tableSize + Hashing.COLLISION_HEAD_ROOM];
 
                     if (flat == null) {
                         flat = GenericArrays.create(tableSize <= 64 ? tableSize : tableSize / 2);
@@ -609,7 +586,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                         if (check < 0) {
                             // done
                             return this;
-                        } else if (check == NO_SPACE) {
+                        } else if (check == Hashing.NO_SPACE) {
                             // collision
                             int newTableSize = Hashing.nextSize(tableSize);
                             if (newTableSize != -1) {
@@ -713,7 +690,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
             }
 
             int checkTable(Object e, int hashPosition) {
-                int max = hashPosition + COLLISION_HEAD_ROOM;
+                int max = hashPosition + Hashing.COLLISION_HEAD_ROOM;
 
                 for (int i = hashPosition + 1; i <= max; i++) {
                     if (table[i] == null) {
@@ -723,7 +700,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                     }
                 }
 
-                return NO_SPACE;
+                return Hashing.NO_SPACE;
             }
 
             @Override
@@ -732,7 +709,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                     return false;
                 } else {
                     int hashPosition = hashPosition(o);
-                    int max = hashPosition + COLLISION_HEAD_ROOM;
+                    int max = hashPosition + Hashing.COLLISION_HEAD_ROOM;
 
                     for (int i = hashPosition; i <= max; i++) {
                         if (table[i] == null) {

@@ -102,14 +102,6 @@ public class DeduplicatingCompactSubSetBuilder<E> {
                 this.size = 1;
             } else {
                 backingCollection.offeredElement = element;
-                // backingCollection.offer(element);
-                /*
-                if (!) {
-                    this.backingCollection = this.backingCollection.branchOff(element);
-                }
-
-                 */
-
                 this.size++;
             }
             this.lastAddedElement = element;
@@ -199,28 +191,6 @@ public class DeduplicatingCompactSubSetBuilder<E> {
             }
         }
 
-        /*
-        BackingBitSetBuilder<E> branchOff(E element) {
-            if (this.copyWith == null) {
-                this.copyWith = new HashMap<>();
-                BackingBitSetBuilder<E> result = this.copy();
-                result.offeredElement = element;
-                this.copyWith.put(element, result);return result;
-            } else {
-                BackingBitSetBuilder<E> result = this.copyWith.get(element);
-                if (result != null) {
-                    result.refCount++;
-                    return result;
-                } else {
-                    result = this.copy();
-                    result.offeredElement = element;
-                    this.copyWith.put(element, result);
-                    result.refCount = 1;
-                    return result;
-                }
-            }
-        }*/
-
         BackingBitSetBuilder<E> branchOff() {
             if (this.copyWithNone == null) {
                 this.copyWithNone = this.copy();
@@ -246,10 +216,6 @@ public class DeduplicatingCompactSubSetBuilder<E> {
             int index = elementToIndexMap.elementToIndex(element);
             long bit = 1l << (index & 0x3f);
             int arrayIndex = (index >> 6) - this.bitArrayOffset;
-
-            // System.out.println("Add " + element + " " + Long.toString(bit, 2) + " " + (index & 0x3f) + " " +
-            // arrayIndex);
-            // System.out.println("> " + Long.toString(this.bits[arrayIndex], 2));
 
             if ((this.bits[arrayIndex] & bit) != 0) {
                 return;

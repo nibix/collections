@@ -15,7 +15,7 @@
  */
 package com.selectivem.collections;
 
-class Hashing {
+abstract class Hashing {
 
     static final int COLLISION_HEAD_ROOM = 10;
     static final int NO_SPACE = Integer.MAX_VALUE;
@@ -108,51 +108,5 @@ class Hashing {
         }
 
         return NO_SPACE;
-    }
-
-    static final <E> E[] reindex(E[] oldTable, int newTableSize) {
-        E[] newTable = GenericArrays.create(newTableSize + COLLISION_HEAD_ROOM);
-
-        int oldTableLength = oldTable.length;
-
-        for (int i = 0; i < oldTableLength; i++) {
-            E e = oldTable[i];
-
-            if (e == null) {
-                continue;
-            }
-
-            int newPosition = checkTable(newTable, e, hashPosition(newTableSize, e));
-
-            if (newPosition == NO_SPACE) {
-                return null;
-            }
-
-            newTable[newPosition] = e;
-        }
-
-        return newTable;
-    }
-
-    static final <E> E[] extend(E[] oldTable, int oldTableSize, int maxNewTableSize) {
-        int newTableSize = nextSize(oldTableSize);
-
-        if (newTableSize == -1) {
-            return null;
-        }
-
-        for (; ; ) {
-            E[] newTable = reindex(oldTable, newTableSize);
-
-            if (newTable != null) {
-                return newTable;
-            }
-
-            newTableSize = nextSize(newTableSize);
-
-            if (newTableSize == -1 || newTableSize > maxNewTableSize) {
-                return null;
-            }
-        }
     }
 }

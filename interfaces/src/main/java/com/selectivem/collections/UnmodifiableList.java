@@ -97,5 +97,4 @@ public interface UnmodifiableList<E> extends UnmodifiableCollection<E>, List<E> 
     default E remove(int index) {
         throw new UnsupportedOperationException();
     }
-
 }
