@@ -31,7 +31,7 @@ public class DeduplicatingCompactSubSetBuilder<E> {
 
     public DeduplicatingCompactSubSetBuilder(Set<E> candidateElements) {
         this.candidateElements = IndexedImmutableSetImpl.of(candidateElements);
-        this.bitArraySize = bitArraySize(candidateElements.size());
+        this.bitArraySize = BitBackedSetImpl.bitArraySize(candidateElements.size());
     }
 
     public DeduplicatingCompactSubSetBuilder.SetBuilder<E> createSetBuilder() {
@@ -264,24 +264,6 @@ public class DeduplicatingCompactSubSetBuilder<E> {
             }
 
             return -1;
-        }
-    }
-
-    static int bitArraySize(int size) {
-        if (size <= 64) {
-            return 1;
-        } else if (size <= 128) {
-            return 2;
-        } else if (size <= 192) {
-            return 3;
-        } else if (size <= 256) {
-            return 4;
-        } else {
-            if ((size & ~0x3f) == 0) {
-                return size >> 6;
-            } else {
-                return size / 64 + 1;
-            }
         }
     }
 }

@@ -286,4 +286,22 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
             }
         }
     }
+
+    static int bitArraySize(int size) {
+        if (size <= 64) {
+            return 1;
+        } else if (size <= 128) {
+            return 2;
+        } else if (size <= 192) {
+            return 3;
+        } else if (size <= 256) {
+            return 4;
+        } else {
+            if ((size & ~0x3f) == 0) {
+                return size >> 6;
+            } else {
+                return size / 64 + 1;
+            }
+        }
+    }
 }
