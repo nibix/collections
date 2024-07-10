@@ -21,7 +21,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-class ImmutableCompactSubSetImpl {
+abstract class ImmutableCompactSubSetImpl {
     static final ImmutableCompactSubSet<Object> EMPTY = of(IndexedImmutableSetImpl.empty());
 
     static <E> ImmutableCompactSubSet<E> empty() {

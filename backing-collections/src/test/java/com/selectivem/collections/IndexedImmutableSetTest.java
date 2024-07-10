@@ -499,6 +499,11 @@ public class IndexedImmutableSetTest {
 
             Assert.assertEquals(IndexedImmutableSetImpl.of("a", "b"), builder.build());
         }
+
+        @Test(expected = IllegalArgumentException.class)
+        public void of3_null() {
+            IndexedImmutableSetImpl.of(new HashSet<>(Arrays.asList("a", "b", null)));
+        }
     }
 
     @RunWith(Parameterized.class)
@@ -641,9 +646,12 @@ public class IndexedImmutableSetTest {
             });
             Set<String> set1000 = stringSet(1000);
             result.add(new Object[] {set1000, IndexedImmutableSetImpl.of(set1000)});
+            Set<String> set3800 = stringSet(3800);
+            result.add(new Object[] {set3800, IndexedImmutableSetImpl.of(set3800)});
             Set<String> set4000 = stringSet(4000);
             result.add(new Object[] {set4000, IndexedImmutableSetImpl.of(set4000)});
-
+            Set<String> set5000 = stringSet(5000);
+            result.add(new Object[] {set5000, IndexedImmutableSetImpl.of(set5000)});
             return result;
         }
 

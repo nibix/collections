@@ -1,6 +1,7 @@
 package com.selectivem.collections;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
@@ -73,17 +74,45 @@ public class DeduplicatingCompactSubSetBuilderTest {
 
             DeduplicatingCompactSubSetBuilder.Completed<String> result = subject.completelyFinished();
 
+            SubSet firstSubSet = subSets.get(0);
+
             for (SubSet subSet : subSets) {
                 subSet.result = subSet.builder.build(result);
                 subSet.result2 = subSet.builder2.build(result);
             }
 
+            // Test equals
             for (SubSet subSet : subSets) {
                 Assert.assertEquals(subSet.reference, subSet.result);
+                Assert.assertTrue(subSet.result.equals(subSet.reference));
+                if (firstSubSet.reference.equals(subSet.reference)) {
+                    Assert.assertTrue(subSet.result.equals(firstSubSet.result));
+                } else {
+                    Assert.assertFalse(subSet.result.equals(firstSubSet.result));
+                }
+            }
+
+            // Test deduplication
+            for (SubSet subSet : subSets) {
                 Assert.assertTrue(subSet.result == subSet.result2);
             }
-        }
 
+            // Test contains
+            for (SubSet subSet : subSets) {
+                for (String element : subSet.reference) {
+                    Assert.assertTrue(subSet.result.contains(element));
+                }
+
+                for (String element : firstSubSet.reference) {
+                    if (subSet.reference.contains(element)) {
+                        Assert.assertTrue(subSet.result.contains(element));
+                    } else {
+                        Assert.assertFalse(subSet.result.contains(element));
+                    }
+                }
+            }
+
+        }
         public Randomized(int seed, int size) {
             this.size = size;
             this.random = new Random(seed);
@@ -209,6 +238,35 @@ public class DeduplicatingCompactSubSetBuilderTest {
             }
 
             return superSet;
+        }
+    }
+
+    public static class Basic {
+        @Test(expected = IllegalStateException.class)
+        public void protocolError_add() {
+            Set<String> superSet = new HashSet<>(Arrays.asList("a", "b", "c", "d"));
+
+            DeduplicatingCompactSubSetBuilder<String> subject = new DeduplicatingCompactSubSetBuilder<>(superSet);
+
+            subject.createSetBuilder().add("a");
+            subject.createSetBuilder().add("b");
+        }
+
+        @Test(expected = IllegalStateException.class)
+        public void protocolError_finished() {
+            Set<String> superSet = new HashSet<>(Arrays.asList("a", "b", "c", "d"));
+
+            DeduplicatingCompactSubSetBuilder<String> subject = new DeduplicatingCompactSubSetBuilder<>(superSet);
+
+            subject.createSetBuilder().add("a");
+            subject.finished("b");
+        }
+
+        @Test(expected = IllegalArgumentException.class)
+        public void addUnknownElement() {
+            Set<String> superSet = new HashSet<>(Arrays.asList("a", "b", "c", "d"));
+            DeduplicatingCompactSubSetBuilder<String> subject = new DeduplicatingCompactSubSetBuilder<>(superSet);
+            subject.createSetBuilder().add("x");
         }
     }
 }
