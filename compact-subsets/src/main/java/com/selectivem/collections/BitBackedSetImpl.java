@@ -304,4 +304,41 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
             }
         }
     }
+
+    static boolean setBit(long [] bits, int index, int bitArrayOffset) {
+        if (index == -1) {
+            return false;
+        }
+
+        long bit = 1l << (index & 0x3f);
+        int arrayIndex = (index >> 6) - bitArrayOffset;
+
+        if ((bits[arrayIndex] & bit) != 0) {
+            return false;
+        }
+
+        bits[arrayIndex] |= bit;
+
+        return true;
+    }
+
+    static int lastNonZeroIndex(long[] array) {
+        for (int i = array.length - 1; i >= 0; i--) {
+            if (array[i] != 0) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    static int firstNonZeroIndex(long[] array) {
+        for (int i =0; i < array.length; i++) {
+            if (array[i] != 0) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }

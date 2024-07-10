@@ -210,18 +210,13 @@ public class DeduplicatingCompactSubSetBuilder<E> {
 
         void add(E element) {
             int index = elementToIndexMap.elementToIndex(element);
-            long bit = 1l << (index & 0x3f);
-            int arrayIndex = (index >> 6) - this.bitArrayOffset;
 
-            if ((this.bits[arrayIndex] & bit) != 0) {
-                return;
-            }
+            if (BitBackedSetImpl.setBit(this.bits, index, this.bitArrayOffset)) {
+                this.size++;
 
-            this.bits[arrayIndex] |= bit;
-            this.size++;
-
-            if (this.firstElement == null) {
-                this.firstElement = element;
+                if (this.firstElement == null) {
+                    this.firstElement = element;
+                }
             }
         }
 
@@ -240,7 +235,7 @@ public class DeduplicatingCompactSubSetBuilder<E> {
                 this.finalBuildResult = ImmutableCompactSubSetImpl.of(IndexedImmutableSetImpl.of(this.firstElement));
             } else {
                 long[] bits = this.bits;
-                int lastNonZeroIndex = lastNonZeroIndex(bits);
+                int lastNonZeroIndex = BitBackedSetImpl.lastNonZeroIndex(bits);
 
                 if (lastNonZeroIndex <= 0) {
                     this.finalBuildResult =
@@ -260,14 +255,6 @@ public class DeduplicatingCompactSubSetBuilder<E> {
             return this.finalBuildResult;
         }
 
-        static int lastNonZeroIndex(long[] array) {
-            for (int i = array.length - 1; i >= 0; i--) {
-                if (array[i] != 0) {
-                    return i;
-                }
-            }
 
-            return -1;
-        }
     }
 }
