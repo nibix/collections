@@ -113,9 +113,9 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
             }
 
             long bit = 1l << (index & 0x3f);
-            int arrayIndex = index >> 6 - this.bitArrayOffset;
+            int arrayIndex = (index >> 6) - this.bitArrayOffset;
 
-            if (arrayIndex >= this.bits.length) {
+            if (arrayIndex >= this.bits.length || arrayIndex < 0) {
                 return false;
             }
 
@@ -251,7 +251,7 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
             long bit = 1l << (index & 0x3f);
             int arrayIndex = (index >> 6) - this.bitArrayOffset;
 
-            if (arrayIndex > 0) {
+            if (arrayIndex != 0) {
                 return false;
             }
 
