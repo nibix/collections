@@ -90,7 +90,8 @@ public class DeduplicatingCompactSubSetBuilder<E> {
 
         public void add(E element) {
             if (root.candidateElements.elementToIndex(element) == -1) {
-                throw new IllegalArgumentException("Element " + element + " is not part of super set " + root.candidateElements);
+                throw new IllegalArgumentException(
+                        "Element " + element + " is not part of super set " + root.candidateElements);
             }
 
             this.root.setCurrentElement(element);
@@ -254,7 +255,5 @@ public class DeduplicatingCompactSubSetBuilder<E> {
 
             return this.finalBuildResult;
         }
-
-
     }
 }

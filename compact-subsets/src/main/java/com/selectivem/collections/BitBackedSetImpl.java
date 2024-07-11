@@ -297,7 +297,8 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
         } else if (size <= 256) {
             return 4;
         } else {
-            if ((size & ~0x3f) == 0) {
+            if ((size & (64 - 1)) == 0) {
+                // Exact multiple of 64
                 return size >> 6;
             } else {
                 return size / 64 + 1;
@@ -305,7 +306,7 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
         }
     }
 
-    static boolean setBit(long [] bits, int index, int bitArrayOffset) {
+    static boolean setBit(long[] bits, int index, int bitArrayOffset) {
         if (index == -1) {
             return false;
         }
@@ -333,7 +334,7 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
     }
 
     static int firstNonZeroIndex(long[] array) {
-        for (int i =0; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++) {
             if (array[i] != 0) {
                 return i;
             }

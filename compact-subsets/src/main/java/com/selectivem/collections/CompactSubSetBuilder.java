@@ -31,34 +31,34 @@ public class CompactSubSetBuilder<E> {
     }
 
     public ImmutableCompactSubSet<E> of(Set<E> set) {
-            long[] bits = new long[bitArraySize];
-            int size = 0;
+        long[] bits = new long[bitArraySize];
+        int size = 0;
 
-            for (E e : set) {
-                int index = elementToIndexMap.elementToIndex(e);
+        for (E e : set) {
+            int index = elementToIndexMap.elementToIndex(e);
 
-                if (BitBackedSetImpl.setBit(bits, index, 0)) {
-                    size++;
-                }
+            if (BitBackedSetImpl.setBit(bits, index, 0)) {
+                size++;
+            }
+        }
+
+        if (size == 0) {
+            return ImmutableCompactSubSetImpl.empty();
+        }
+
+        int firstNonZero = BitBackedSetImpl.firstNonZeroIndex(bits);
+        int lastNonZero = BitBackedSetImpl.lastNonZeroIndex(bits);
+
+        if (firstNonZero == lastNonZero) {
+            return new BitBackedSetImpl.LongBacked<>(bits[firstNonZero], size, elementToIndexMap, firstNonZero);
+        } else {
+            if (firstNonZero != 0 || lastNonZero != bits.length - 1) {
+                long[] oldBits = bits;
+                bits = new long[lastNonZero - firstNonZero + 1];
+                System.arraycopy(oldBits, firstNonZero, bits, 0, bits.length);
             }
 
-            if (size == 0) {
-                return ImmutableCompactSubSetImpl.empty();
-            }
-
-            int firstNonZero = BitBackedSetImpl.firstNonZeroIndex(bits);
-            int lastNonZero = BitBackedSetImpl.lastNonZeroIndex(bits);
-
-            if (firstNonZero == lastNonZero) {
-                return new BitBackedSetImpl.LongBacked<>(bits[firstNonZero], size, elementToIndexMap, firstNonZero);
-            } else {
-                if (firstNonZero != 0 || lastNonZero != bits.length - 1) {
-                    long [] oldBits = bits;
-                    bits = new long [lastNonZero - firstNonZero + 1];
-                    System.arraycopy(oldBits, firstNonZero, bits, 0, bits.length);
-                }
-
-                return new BitBackedSetImpl.LongArrayBacked<>(bits, size, elementToIndexMap, firstNonZero);
-            }
+            return new BitBackedSetImpl.LongArrayBacked<>(bits, size, elementToIndexMap, firstNonZero);
+        }
     }
 }

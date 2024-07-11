@@ -15,17 +15,16 @@
  */
 package com.selectivem.collections;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 @RunWith(Enclosed.class)
 public class CompactSubSetBuilderTest {
@@ -50,7 +49,7 @@ public class CompactSubSetBuilderTest {
         }
 
         @Test
-                public void contains() {
+        public void contains() {
             ImmutableCompactSubSet<String> subSet = subject.of(subSetCandidates);
 
             for (String subSetCandidate : subSetCandidates) {
@@ -71,7 +70,7 @@ public class CompactSubSetBuilderTest {
         }
 
         @Test
-                public void equalsBetweenSameClass() {
+        public void equalsBetweenSameClass() {
             ImmutableCompactSubSet<String> subSet1 = subject.of(subSetCandidates);
             ImmutableCompactSubSet<String> subSet2 = subject.of(subSetCandidates);
             ImmutableCompactSubSet<String> subSetX = subject.of(superSet);
@@ -83,7 +82,7 @@ public class CompactSubSetBuilderTest {
             }
         }
 
-       public ParameterizedTest(Set<String> superSet, Set<String> subSetCandidates) {
+        public ParameterizedTest(Set<String> superSet, Set<String> subSetCandidates) {
             this.superSet = superSet;
             this.subSetCandidates = subSetCandidates;
             this.subject = new CompactSubSetBuilder<>(this.superSet);
@@ -94,18 +93,20 @@ public class CompactSubSetBuilderTest {
         public static Collection<Object[]> params() {
             ArrayList<Object[]> result = new ArrayList<>();
 
-            result.add(new Object [] {setOf("a"), setOf("a")});
-            result.add(new Object [] {setOf("a"), setOf("x")});
-            result.add(new Object [] {setOf("a"), setOf("a", "xx")});
-            result.add(new Object [] {setOf("a", "b"), setOf("x")});
-            result.add(new Object [] {setOf("a", "b"), setOf("a", "xx")});
-            result.add(new Object [] {stringSet(100), setOf("an", "xx")});
-            result.add(new Object [] {stringSet(100), setOf("a", "xx")});
+            result.add(new Object[] {setOf("a"), setOf("a")});
+            result.add(new Object[] {setOf("a"), setOf("x")});
+            result.add(new Object[] {setOf("a"), setOf("a", "xx")});
+            result.add(new Object[] {setOf("a", "b"), setOf("x")});
+            result.add(new Object[] {setOf("a", "b"), setOf("a", "xx")});
+            result.add(new Object[] {stringSet(100), setOf("an", "xx")});
+            result.add(new Object[] {stringSet(100), setOf("a", "xx")});
+            result.add(new Object[] {stringSet(100), stringSet(90)});
+            result.add(new Object[] {stringSet(700), stringSet(70)});
 
             return result;
         }
 
-        static Set<String> setOf(String ... elements) {
+        static Set<String> setOf(String... elements) {
             return new HashSet<>(Arrays.asList(elements));
         }
 
@@ -114,7 +115,6 @@ public class CompactSubSetBuilderTest {
             result.retainAll(set2);
             return result;
         }
-
 
         static Set<String> stringSet(int size) {
             HashSet<String> result = new HashSet<>(size);

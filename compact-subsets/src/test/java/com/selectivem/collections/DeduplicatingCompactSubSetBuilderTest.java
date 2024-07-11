@@ -126,8 +126,8 @@ public class DeduplicatingCompactSubSetBuilderTest {
                     }
                 }
             }
-
         }
+
         public Randomized(int seed, int size) {
             this.size = size;
             this.random = new Random(seed);

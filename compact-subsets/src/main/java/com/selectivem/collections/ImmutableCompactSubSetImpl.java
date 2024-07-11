@@ -94,6 +94,11 @@ abstract class ImmutableCompactSubSetImpl {
             public void forEach(Consumer<? super E> action) {
                 delegate.forEach(action);
             }
+
+            @Override
+            public String toString() {
+                return delegate.toString();
+            }
         };
     }
 }
