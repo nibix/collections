@@ -21,6 +21,13 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
+/**
+ * Represents a list that does not allow modification via its public methods.
+ *
+ * Possibly, such a list is also immutable, i.e., guaranteed to never change.
+ * However, it is also possible that an UnmodifiableSet changes "behind" the scenes.
+ * This can be the case for views on other collections.
+ */
 public interface UnmodifiableList<E> extends UnmodifiableCollection<E>, List<E> {
     @Override
     @Deprecated

@@ -53,21 +53,24 @@ public class DeduplicatingCompactSubSetBuilderTest {
             }
 
             for (int i = 0; i < countSubSets; i++) {
-                subSets.add(new SubSet(subject.createSetBuilder(), subject.createSetBuilder(), random.nextFloat()));
-            }
-
-            for (int i = 0; i < countSubSets; i++) {
                 subSets.add(
-                        new SubSet(subject.createSetBuilder(), subject.createSetBuilder(), random.nextFloat() * 0.1f));
+                        new SubSet(subject.createSubSetBuilder(), subject.createSubSetBuilder(), random.nextFloat()));
             }
 
             for (int i = 0; i < countSubSets; i++) {
                 subSets.add(new SubSet(
-                        subject.createSetBuilder(), subject.createSetBuilder(), random.nextFloat() * 0.1f + 0.09f));
+                        subject.createSubSetBuilder(), subject.createSubSetBuilder(), random.nextFloat() * 0.1f));
+            }
+
+            for (int i = 0; i < countSubSets; i++) {
+                subSets.add(new SubSet(
+                        subject.createSubSetBuilder(),
+                        subject.createSubSetBuilder(),
+                        random.nextFloat() * 0.1f + 0.09f));
             }
 
             for (int i = 0; i < 9; i++) {
-                subSets.add(new SubSet(subject.createSetBuilder(), subject.createSetBuilder(), "a" + i));
+                subSets.add(new SubSet(subject.createSubSetBuilder(), subject.createSubSetBuilder(), "a" + i));
             }
 
             for (String element : superSet) {
@@ -87,7 +90,7 @@ public class DeduplicatingCompactSubSetBuilderTest {
                 subject.finished(element);
             }
 
-            DeduplicatingCompactSubSetBuilder.Completed<String> result = subject.completelyFinished();
+            DeduplicatingCompactSubSetBuilder.Completed<String> result = subject.build();
 
             SubSet firstSubSet = subSets.get(0);
 
@@ -197,8 +200,8 @@ public class DeduplicatingCompactSubSetBuilderTest {
         }
 
         static class SubSet {
-            final DeduplicatingCompactSubSetBuilder.SetBuilder<String> builder;
-            final DeduplicatingCompactSubSetBuilder.SetBuilder<String> builder2;
+            final DeduplicatingCompactSubSetBuilder.SubSetBuilder<String> builder;
+            final DeduplicatingCompactSubSetBuilder.SubSetBuilder<String> builder2;
             final Set<String> reference = new HashSet<>();
             final float inclusionProbability;
             final String includeStringPrefix;
@@ -207,8 +210,8 @@ public class DeduplicatingCompactSubSetBuilderTest {
             Set<String> result2;
 
             public SubSet(
-                    DeduplicatingCompactSubSetBuilder.SetBuilder<String> builder,
-                    DeduplicatingCompactSubSetBuilder.SetBuilder<String> builder2,
+                    DeduplicatingCompactSubSetBuilder.SubSetBuilder<String> builder,
+                    DeduplicatingCompactSubSetBuilder.SubSetBuilder<String> builder2,
                     float inclusionProbability) {
                 this.builder = builder;
                 this.builder2 = builder2;
@@ -217,8 +220,8 @@ public class DeduplicatingCompactSubSetBuilderTest {
             }
 
             public SubSet(
-                    DeduplicatingCompactSubSetBuilder.SetBuilder<String> builder,
-                    DeduplicatingCompactSubSetBuilder.SetBuilder<String> builder2,
+                    DeduplicatingCompactSubSetBuilder.SubSetBuilder<String> builder,
+                    DeduplicatingCompactSubSetBuilder.SubSetBuilder<String> builder2,
                     String includeStringPrefix) {
                 this.builder = builder;
                 this.builder2 = builder2;
@@ -263,8 +266,8 @@ public class DeduplicatingCompactSubSetBuilderTest {
 
             DeduplicatingCompactSubSetBuilder<String> subject = new DeduplicatingCompactSubSetBuilder<>(superSet);
 
-            subject.createSetBuilder().add("a");
-            subject.createSetBuilder().add("b");
+            subject.createSubSetBuilder().add("a");
+            subject.createSubSetBuilder().add("b");
         }
 
         @Test(expected = IllegalStateException.class)
@@ -273,7 +276,7 @@ public class DeduplicatingCompactSubSetBuilderTest {
 
             DeduplicatingCompactSubSetBuilder<String> subject = new DeduplicatingCompactSubSetBuilder<>(superSet);
 
-            subject.createSetBuilder().add("a");
+            subject.createSubSetBuilder().add("a");
             subject.finished("b");
         }
 
@@ -281,7 +284,7 @@ public class DeduplicatingCompactSubSetBuilderTest {
         public void addUnknownElement() {
             Set<String> superSet = new HashSet<>(Arrays.asList("a", "b", "c", "d"));
             DeduplicatingCompactSubSetBuilder<String> subject = new DeduplicatingCompactSubSetBuilder<>(superSet);
-            subject.createSetBuilder().add("x");
+            subject.createSubSetBuilder().add("x");
         }
     }
 }

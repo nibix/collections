@@ -18,6 +18,13 @@ package com.selectivem.collections;
 import java.util.Collection;
 import java.util.function.Predicate;
 
+/**
+ * Represents a collection that does not allow modification via its public methods.
+ *
+ * Possibly, such a collection is also immutable, i.e., guaranteed to never change.
+ * However, it is also possible that an UnmodifiableSet changes "behind" the scenes.
+ * This can be the case for views on other collections.
+ */
 public interface UnmodifiableCollection<E> extends FluentCollection<E> {
 
     @Override

@@ -19,24 +19,47 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Allows the creation of compact sub-sets of a given super-set. It also provides space and compute efficient
+ * deduplication of sub-set instances. Creating several sub-set builders which end up to have the same elements,
+ * will result in the same ImmutableCompactSubSet instances to be produced.
+ *
+ * In order to provide this functionality efficiently, users of this class need to follow a certain protocol:
+ *
+ * - Iterate through the super-set in its natural iteration order.
+ * - Call DeduplicatingCompactSubSetBuilder.SubSetBuilder.add() for the current element on any
+ *   DeduplicatingCompactSubSetBuilder.SubSetBuilder instance you want.
+ * - Call finished() on the current element.
+ * - Only then advance to the next element.
+ * - After all sets have been added, call build(). This will return a DeduplicatingCompactSubSetBuilder.Completed
+ *   instance which allows you to call the build() methods on the SubSetBuilder instances.
+ *
+ * @author Nils Bandener
+ */
 public class DeduplicatingCompactSubSetBuilder<E> {
     private final IndexedImmutableSetImpl<E> candidateElements;
     private final int bitArraySize;
     private E currentElement;
     private BackingBitSetBuilder<E> backingCollectionWithCurrentElementOnly = null;
-    private List<SetBuilder<E>> setBuilders = new ArrayList<>();
+    private List<SubSetBuilder<E>> subSetBuilders = new ArrayList<>();
     private List<BackingBitSetBuilder<E>> backingBitSets = new ArrayList<>();
     private int estimatedBackingArraySize = 0;
     private int estimatedObjectOverheadSize = 0;
 
-    public DeduplicatingCompactSubSetBuilder(Set<E> candidateElements) {
-        this.candidateElements = IndexedImmutableSetImpl.of(candidateElements);
-        this.bitArraySize = BitBackedSetImpl.bitArraySize(candidateElements.size());
+    /**
+     * Creates a new builder instance for the given superSet. The superSet will be copied.
+     */
+    public DeduplicatingCompactSubSetBuilder(Set<E> superSet) {
+        this.candidateElements = IndexedImmutableSetImpl.of(superSet);
+        this.bitArraySize = BitBackedSetImpl.bitArraySize(superSet.size());
     }
 
-    public DeduplicatingCompactSubSetBuilder.SetBuilder<E> createSetBuilder() {
-        SetBuilder<E> result = new SetBuilder<>(this);
-        this.setBuilders.add(result);
+    /**
+     * Creates a new SubSetBuilder instance. Can be called at any time before build() is called.
+     */
+    public SubSetBuilder<E> createSubSetBuilder() {
+        SubSetBuilder<E> result = new SubSetBuilder<>(this);
+        this.subSetBuilders.add(result);
         return result;
     }
 
@@ -47,8 +70,8 @@ public class DeduplicatingCompactSubSetBuilder<E> {
             }
         }
 
-        for (SetBuilder<E> setBuilder : this.setBuilders) {
-            setBuilder.finish(candidateElement);
+        for (SubSetBuilder<E> subSetBuilder : this.subSetBuilders) {
+            subSetBuilder.finish(candidateElement);
         }
 
         for (BackingBitSetBuilder<E> backingBitSetBuilder : this.backingBitSets) {
@@ -59,10 +82,19 @@ public class DeduplicatingCompactSubSetBuilder<E> {
         this.backingCollectionWithCurrentElementOnly = null;
     }
 
-    public Completed<E> completelyFinished() {
+    /**
+     * Finalizes this build process. This method will return a Completed instance which
+     * can be used to finalize building individual sub-sets.
+     */
+    public Completed<E> build() {
         return new Completed<>(this);
     }
 
+    /**
+     * Returns the estimated byte size of all instances created by this instance. This number
+     * might be higher than the finally created instances, because some compaction might also occur during
+     * the final build stage.
+     */
     public int getEstimatedByteSize() {
         return this.estimatedBackingArraySize + this.estimatedObjectOverheadSize;
     }
@@ -77,17 +109,24 @@ public class DeduplicatingCompactSubSetBuilder<E> {
         }
     }
 
-    public static class SetBuilder<E> {
+    public static class SubSetBuilder<E> {
 
         private final DeduplicatingCompactSubSetBuilder<E> root;
         private int size = 0;
         private BackingBitSetBuilder<E> backingCollection;
         private E lastAddedElement;
 
-        SetBuilder(DeduplicatingCompactSubSetBuilder<E> root) {
+        SubSetBuilder(DeduplicatingCompactSubSetBuilder<E> root) {
             this.root = root;
         }
 
+        /**
+         * Adds an element to this builder instance.
+         *
+         * Note: You need to observe the protocol requirements imposed by DeduplicatingCompactSubSetBuilder:
+         * - You can only call add() for elements that are member of the super-set given when the DeduplicatingCompactSubSetBuilder was created. Otherwise, a IllegalArgumentException will be thrown.
+         * - You must stick to the iteration order for the super-set.
+         */
         public void add(E element) {
             if (root.candidateElements.elementToIndex(element) == -1) {
                 throw new IllegalArgumentException(

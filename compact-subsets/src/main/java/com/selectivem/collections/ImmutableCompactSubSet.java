@@ -15,4 +15,12 @@
  */
 package com.selectivem.collections;
 
+/**
+ * Instances of this interface are produced by the classes CompactSubSetBuilder and DeduplicatingCompactSubSetBuilder.
+ *
+ * Instances are supposed to be space-efficient. For this, bit-fields can be used to specify the member elements.
+ *
+ * Additionally, the containsAny() and containsAll() methods might use bit operations to provide computation
+ * efficient functionality.
+ */
 public interface ImmutableCompactSubSet<E> extends UnmodifiableSet<E> {}

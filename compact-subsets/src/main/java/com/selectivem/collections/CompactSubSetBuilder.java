@@ -17,6 +17,15 @@ package com.selectivem.collections;
 
 import java.util.Set;
 
+/**
+ * Allows the creation of space efficient sub-sets of the super-set specified in the constructor.
+ *
+ * The sub-sets are usually represented by bitfields, thus these can be very compact.
+ *
+ * This class copies the super-set. All sub-sets produced by this class will be immutable.
+ *
+ * @author Nils Bandener
+ */
 public class CompactSubSetBuilder<E> {
     private final IndexedImmutableSetImpl<E> elementToIndexMap;
     private final int bitArraySize;
@@ -26,10 +35,25 @@ public class CompactSubSetBuilder<E> {
         this.bitArraySize = BitBackedSetImpl.bitArraySize(elementToIndexMap.size());
     }
 
+    /**
+     * Creates a DeduplicatingCompactSubSetBuilder which gives you set deduplication functionality.
+     *
+     * The advantage of calling this method instead of calling new DeduplicatingCompactSubSetBuilder() is that
+     * the copy of the super-set will be shared by both instances.
+     *
+     * This also allows for optimizations of the containsAny() and containsAll() calls.
+     */
     public DeduplicatingCompactSubSetBuilder<E> deduplicatingBuilder() {
         return new DeduplicatingCompactSubSetBuilder<>(this.elementToIndexMap);
     }
 
+    /**
+     * Creates a compact set representing the intersection of the given set and the super-set
+     * given when constructing the CompactSubSetBuilder instance.
+     *
+     * Elements in the given set which are not contained in the super-set will be silently
+     * ignored.
+     */
     public ImmutableCompactSubSet<E> of(Set<E> set) {
         long[] bits = new long[bitArraySize];
         int size = 0;

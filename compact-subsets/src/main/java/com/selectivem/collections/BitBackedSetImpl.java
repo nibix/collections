@@ -18,6 +18,11 @@ package com.selectivem.collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * A BitBackedSet is a view on a IndexedImmutableSetImpl, where bitfields determine whether a
+ * member of the IndexedImmutableSetImpl is also a member of the BitBackedSet. Thus, a BitBackedSet
+ * is always a strict sub-set of a IndexedImmutableSetImpl.
+ */
 abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements ImmutableCompactSubSet<E> {
 
     static final class LongArrayBacked<E> extends BitBackedSetImpl<E> {
