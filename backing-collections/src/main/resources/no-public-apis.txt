@@ -1,0 +1,1 @@
+This package contains no public APIs. It is just used by other com.selectivem.collections packages.
