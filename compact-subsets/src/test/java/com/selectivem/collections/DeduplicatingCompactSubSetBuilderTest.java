@@ -74,6 +74,8 @@ public class DeduplicatingCompactSubSetBuilderTest {
             }
 
             for (String element : superSet) {
+                subject.next(element);
+
                 for (SubSet subSet : subSets) {
                     if (subSet.include(element, random)) {
                         if (random.nextFloat() < 0.5) {
@@ -86,8 +88,6 @@ public class DeduplicatingCompactSubSetBuilderTest {
                         subSet.reference.add(element);
                     }
                 }
-
-                subject.finished(element);
             }
 
             DeduplicatingCompactSubSetBuilder.Completed<String> result = subject.build();
@@ -271,13 +271,13 @@ public class DeduplicatingCompactSubSetBuilderTest {
         }
 
         @Test(expected = IllegalStateException.class)
-        public void protocolError_finished() {
+        public void protocolError_next() {
             Set<String> superSet = new HashSet<>(Arrays.asList("a", "b", "c", "d"));
 
             DeduplicatingCompactSubSetBuilder<String> subject = new DeduplicatingCompactSubSetBuilder<>(superSet);
 
+            subject.next("b");
             subject.createSubSetBuilder().add("a");
-            subject.finished("b");
         }
 
         @Test(expected = IllegalArgumentException.class)

@@ -27,10 +27,10 @@ import java.util.Set;
  * In order to provide this functionality efficiently, users of this class need to follow a certain protocol:
  *
  * - Iterate through the super-set in its natural iteration order.
+ * - Call next() for the current element.
  * - Call DeduplicatingCompactSubSetBuilder.SubSetBuilder.add() for the current element on any
  *   DeduplicatingCompactSubSetBuilder.SubSetBuilder instance you want.
- * - Call finished() on the current element.
- * - Only then advance to the next element.
+ * - Only then advance to the next element, also call next() for that one.
  * - After all sets have been added, call build(). This will return a DeduplicatingCompactSubSetBuilder.Completed
  *   instance which allows you to call the build() methods on the SubSetBuilder instances.
  *
@@ -63,23 +63,20 @@ public class DeduplicatingCompactSubSetBuilder<E> {
         return result;
     }
 
-    public void finished(E candidateElement) {
+    /**
+     * Informs the builder about the next element that is going to be added to the sub-set builders.
+     * The add() method of the sub-set builders will only accept the given element until `next()` is
+     * called again with another element.
+     *
+     * Note: You need to follow the iteration order of the superSet originally supplied to this instance.
+     * You can however skip elements completely.
+     */
+    public void next(E candidateElement) {
         if (this.currentElement != null) {
-            if (!candidateElement.equals(this.currentElement)) {
-                throw new IllegalStateException("Element was not finished: " + this.currentElement);
-            }
+            this.finishCurrentElement();
         }
 
-        for (SubSetBuilder<E> subSetBuilder : this.subSetBuilders) {
-            subSetBuilder.finish(candidateElement);
-        }
-
-        for (BackingBitSetBuilder<E> backingBitSetBuilder : this.backingBitSets) {
-            backingBitSetBuilder.finish(candidateElement);
-        }
-
-        this.currentElement = null;
-        this.backingCollectionWithCurrentElementOnly = null;
+        this.currentElement = candidateElement;
     }
 
     /**
@@ -87,6 +84,7 @@ public class DeduplicatingCompactSubSetBuilder<E> {
      * can be used to finalize building individual sub-sets.
      */
     public Completed<E> build() {
+        this.finishCurrentElement();
         return new Completed<>(this);
     }
 
@@ -99,14 +97,31 @@ public class DeduplicatingCompactSubSetBuilder<E> {
         return this.estimatedBackingArraySize + this.estimatedObjectOverheadSize;
     }
 
-    void setCurrentElement(E currentElement) {
+    void validateCurrentElement(E candidateElement) {
         if (this.currentElement != null) {
-            if (!currentElement.equals(this.currentElement)) {
-                throw new IllegalStateException("Element was not finished: " + this.currentElement);
+            if (!candidateElement.equals(this.currentElement)) {
+                throw new IllegalStateException("Trying to add an element which is not the current element; candidateElement: " + candidateElement +"; currentElement: " + currentElement);
             }
         } else {
-            this.currentElement = currentElement;
+            throw new IllegalStateException("next() must be called before an element can be added");
         }
+    }
+
+    void finishCurrentElement() {
+        if (this.currentElement == null) {
+            return;
+        }
+
+        for (SubSetBuilder<E> subSetBuilder : this.subSetBuilders) {
+            subSetBuilder.finish(this.currentElement);
+        }
+
+        for (BackingBitSetBuilder<E> backingBitSetBuilder : this.backingBitSets) {
+            backingBitSetBuilder.finish(this.currentElement);
+        }
+
+        this.currentElement = null;
+        this.backingCollectionWithCurrentElementOnly = null;
     }
 
     public static class SubSetBuilder<E> {
@@ -133,7 +148,7 @@ public class DeduplicatingCompactSubSetBuilder<E> {
                         "Element " + element + " is not part of super set " + root.candidateElements);
             }
 
-            this.root.setCurrentElement(element);
+            this.root.validateCurrentElement(element);
 
             if (size == 0) {
                 if (root.backingCollectionWithCurrentElementOnly != null) {
