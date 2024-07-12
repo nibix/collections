@@ -100,7 +100,9 @@ public class DeduplicatingCompactSubSetBuilder<E> {
     void validateCurrentElement(E candidateElement) {
         if (this.currentElement != null) {
             if (!candidateElement.equals(this.currentElement)) {
-                throw new IllegalStateException("Trying to add an element which is not the current element; candidateElement: " + candidateElement +"; currentElement: " + currentElement);
+                throw new IllegalStateException(
+                        "Trying to add an element which is not the current element; candidateElement: "
+                                + candidateElement + "; currentElement: " + currentElement);
             }
         } else {
             throw new IllegalStateException("next() must be called before an element can be added");
