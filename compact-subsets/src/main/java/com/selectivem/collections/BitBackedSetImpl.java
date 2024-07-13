@@ -62,17 +62,21 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
                 }
 
                 int findNext(int arrayIndex, int bitIndex) {
+                    int actualArrayIndex = arrayIndex - bitArrayOffset;
+
                     if (bitIndex >= 64) {
                         bitIndex = 0;
                         arrayIndex++;
+                        actualArrayIndex++;
 
-                        if (arrayIndex - bitArrayOffset >= bits.length) {
+                        if (actualArrayIndex >= bits.length) {
                             return -1;
                         }
 
-                        while (bits[arrayIndex - bitArrayOffset] == 0) {
+                        while (bits[actualArrayIndex] == 0) {
                             arrayIndex++;
-                            if (arrayIndex - bitArrayOffset >= bits.length) {
+                            actualArrayIndex++;
+                            if (actualArrayIndex >= bits.length) {
                                 return -1;
                             }
                         }
@@ -82,7 +86,7 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
                     for (; ; ) {
                         long bit = 1l << bitIndex;
 
-                        if ((bits[arrayIndex - bitArrayOffset] & bit) != 0) {
+                        if ((bits[actualArrayIndex] & bit) != 0) {
                             return arrayIndex << 6 | bitIndex;
                         }
 
@@ -90,10 +94,19 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
                         if (bitIndex >= 64) {
                             bitIndex = 0;
                             arrayIndex++;
-                        }
+                            actualArrayIndex++;
 
-                        if (arrayIndex - bitArrayOffset >= bits.length) {
-                            return -1;
+                            if (actualArrayIndex >= bits.length) {
+                                return -1;
+                            }
+
+                            while (bits[actualArrayIndex] == 0) {
+                                arrayIndex++;
+                                actualArrayIndex++;
+                                if (actualArrayIndex >= bits.length) {
+                                    return -1;
+                                }
+                            }
                         }
                     }
                 }
