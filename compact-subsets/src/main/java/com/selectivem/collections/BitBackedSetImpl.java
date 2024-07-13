@@ -65,11 +65,19 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
                     if (bitIndex >= 64) {
                         bitIndex = 0;
                         arrayIndex++;
+
+                        if (arrayIndex - bitArrayOffset >= bits.length) {
+                            return -1;
+                        }
+
+                        while (bits[arrayIndex - bitArrayOffset] == 0) {
+                            arrayIndex++;
+                            if (arrayIndex - bitArrayOffset >= bits.length) {
+                                return -1;
+                            }
+                        }
                     }
 
-                    if (arrayIndex - bitArrayOffset >= bits.length) {
-                        return -1;
-                    }
 
                     for (; ; ) {
                         long bit = 1l << bitIndex;
