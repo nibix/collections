@@ -18,6 +18,9 @@ package com.selectivem.collections;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 public class BitBackedSetImplTest {
     @Test
     public void bitArraySize() {
@@ -43,5 +46,58 @@ public class BitBackedSetImplTest {
         Assert.assertEquals(1, BitBackedSetImpl.firstNonZeroIndex(new long[] {0, 1, 0, 0}));
         Assert.assertEquals(0, BitBackedSetImpl.firstNonZeroIndex(new long[] {1, 2, 3, 0}));
         Assert.assertEquals(-1, BitBackedSetImpl.firstNonZeroIndex(new long[] {0, 0, 0, 0}));
+    }
+
+    @Test
+    public void empty_arrayBacked() {
+        BitBackedSetImpl.LongArrayBacked<String> subject = new BitBackedSetImpl.LongArrayBacked<>(new long [] {0}, 0, IndexedImmutableSetImpl.of("a"), 0);
+        Assert.assertTrue(subject.isEmpty());
+    }
+
+    @Test
+    public void empty_longBacked() {
+        BitBackedSetImpl.LongBacked<String> subject = new BitBackedSetImpl.LongBacked<>(0, 0, IndexedImmutableSetImpl.of("a"), 0);
+        Assert.assertTrue(subject.isEmpty());
+    }
+
+    @Test
+    public void contains_arrayBacked() {
+        BitBackedSetImpl.LongArrayBacked<String> subject = new BitBackedSetImpl.LongArrayBacked<>(new long [] {1}, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
+        Assert.assertTrue(subject.contains("a"));
+        Assert.assertFalse(subject.contains("b"));
+        Assert.assertFalse(subject.contains("x"));
+    }
+
+    @Test
+    public void contains_longBacked() {
+        BitBackedSetImpl.LongBacked<String> subject = new BitBackedSetImpl.LongBacked<>(1, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
+        Assert.assertTrue(subject.contains("a"));
+        Assert.assertFalse(subject.contains("b"));
+        Assert.assertFalse(subject.contains("x"));
+    }
+
+
+    @Test(expected = NoSuchElementException.class)
+    public void iterator_exhausted_arrayBacked() {
+        BitBackedSetImpl.LongArrayBacked<String> subject = new BitBackedSetImpl.LongArrayBacked<>(new long [] {1}, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
+        Iterator<String> iter = subject.iterator();
+
+        while (iter.hasNext()) {
+            iter.next();
+        }
+
+        iter.next();
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void iterator_exhausted_longBacked() {
+        BitBackedSetImpl.LongBacked<String> subject = new BitBackedSetImpl.LongBacked<>(1, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
+        Iterator<String> iter = subject.iterator();
+
+        while (iter.hasNext()) {
+            iter.next();
+        }
+
+        iter.next();
     }
 }
