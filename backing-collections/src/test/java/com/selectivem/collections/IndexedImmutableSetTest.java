@@ -500,6 +500,21 @@ public class IndexedImmutableSetTest {
             Assert.assertEquals(IndexedImmutableSetImpl.of("a", "b"), builder.build());
         }
 
+        @Test
+        public void builder_grow() {
+            IndexedImmutableSetImpl.InternalBuilder<String> builder =
+                    IndexedImmutableSetImpl.<String>builder(10);
+            Set<String> reference = new HashSet<>(4100);
+
+            for (int i = 0; i < 4100; i++) {
+                String e = "a" + i;
+                builder = builder.with(e);
+                reference.add(e);
+            }
+
+            Assert.assertEquals(reference, builder.build());
+        }
+
         @Test(expected = IllegalArgumentException.class)
         public void of3_null() {
             IndexedImmutableSetImpl.of(new HashSet<>(Arrays.asList("a", "b", null)));
