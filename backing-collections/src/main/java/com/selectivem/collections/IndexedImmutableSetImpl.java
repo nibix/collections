@@ -156,6 +156,10 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
 
             return result.toString();
         }
+
+        IndexedImmutableSetImpl.InternalBuilder<E> probingOverheadFactor(short probingOverheadFactor) {
+            return this;
+        }
     }
 
     static class OneElementSet<E> extends IndexedImmutableSetImpl<E> {
@@ -534,6 +538,8 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
             private E[] flat;
             private short[] indices;
             private short size = 0;
+            private int probingOverhead;
+            private short probingOverheadFactor = 3;
             private final int tableSize;
 
             public Builder(int tableSize) {
@@ -590,7 +596,8 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                             // collision
                             int newTableSize = Hashing.nextSize(tableSize);
                             if (newTableSize != -1) {
-                                return new HashArrayBackedSet.Builder<E>(newTableSize)
+                                return new Builder<E>(newTableSize)
+                                        .probingOverheadFactor(this.probingOverheadFactor)
                                         .with(flat, size)
                                         .with(e);
                             } else {
@@ -604,6 +611,23 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                             extendFlat();
                             flat[size] = e;
                             size++;
+
+                            if (check != position) {
+                                this.probingOverhead += check - position;
+
+                                if (this.size >= 12 && this.probingOverhead > this.size * this.probingOverheadFactor) {
+                                    // probing overhead exceeds threshold
+                                    int newTableSize = Hashing.nextSize(tableSize);
+                                    if (newTableSize != -1) {
+                                        return new HashArrayBackedSet.Builder<E>(newTableSize)
+                                                .probingOverheadFactor(this.probingOverheadFactor)
+                                                .with(flat, size);
+                                    } else {
+                                        return new SetBackedSet.Builder<E>(this.size).with(flat, size);
+                                    }
+                                }
+                            }
+
                             return this;
                         }
                     }
@@ -676,6 +700,11 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                         }
                     }
                 };
+            }
+
+            IndexedImmutableSetImpl.InternalBuilder<E> probingOverheadFactor(short probingOverheadFactor) {
+                this.probingOverheadFactor = probingOverheadFactor;
+                return this;
             }
 
             private int hashPosition(Object e) {

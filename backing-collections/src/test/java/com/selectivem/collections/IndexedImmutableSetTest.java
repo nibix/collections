@@ -503,7 +503,7 @@ public class IndexedImmutableSetTest {
         @Test
         public void builder_grow() {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
-                    IndexedImmutableSetImpl.<String>builder(10);
+                    IndexedImmutableSetImpl.<String>builder(10).probingOverheadFactor((short) 1);
             Set<String> reference = new HashSet<>(4100);
 
             for (int i = 0; i < 4100; i++) {
@@ -661,8 +661,10 @@ public class IndexedImmutableSetTest {
             });
             Set<String> set1000 = stringSet(1000);
             result.add(new Object[] {set1000, IndexedImmutableSetImpl.of(set1000)});
-            Set<String> set3800 = stringSet(3800);
-            result.add(new Object[] {set3800, IndexedImmutableSetImpl.of(set3800)});
+            Set<String> set2000 = stringSet(2000);
+            result.add(new Object[] {set2000, IndexedImmutableSetImpl.of(set2000)});
+            Set<String> set3000 = stringSet(3000);
+            result.add(new Object[] {set3000, IndexedImmutableSetImpl.of(set3000)});
             Set<String> set4000 = stringSet(4000);
             result.add(new Object[] {set4000, IndexedImmutableSetImpl.of(set4000)});
             Set<String> set5000 = stringSet(5000);
