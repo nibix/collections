@@ -5,12 +5,12 @@
   <parent>
     <groupId>com.selectivem.collections</groupId>
     <artifactId>collections</artifactId>
-    <version>${revision}</version>
+    <version>1.2.1</version>
   </parent>
 
   <groupId>com.selectivem.collections</groupId>
   <artifactId>compact-subsets</artifactId>
-  <version>${revision}</version>
+  <version>1.2.1</version>
   <packaging>jar</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Set implementations that allow heap-efficient subsets of other sets</description>
