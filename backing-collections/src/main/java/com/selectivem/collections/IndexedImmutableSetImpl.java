@@ -606,30 +606,29 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                                         .with(e);
                             }
                         } else {
+                            // check != position
                             table[check] = e;
                             indices[check] = size;
                             extendFlat();
                             flat[size] = e;
                             size++;
 
-                            if (check != position) {
-                                this.probingOverhead += check - position;
+                            this.probingOverhead += check - position;
 
-                                if (this.size >= 12 && this.probingOverhead > this.size * this.probingOverheadFactor) {
-                                    // probing overhead exceeds threshold
-                                    int newTableSize = Hashing.nextSize(tableSize);
-                                    if (newTableSize != -1) {
-                                        return new HashArrayBackedSet.Builder<E>(newTableSize)
-                                                .probingOverheadFactor(this.probingOverheadFactor)
-                                                .with(flat, size);
-                                    } else {
-                                        return new SetBackedSet.Builder<E>(this.size).with(flat, size);
-                                    }
+                            if (this.size >= 12 && this.probingOverhead > this.size * this.probingOverheadFactor) {
+                                // probing overhead exceeds threshold
+                                int newTableSize = Hashing.nextSize(tableSize);
+                                if (newTableSize != -1) {
+                                    return new HashArrayBackedSet.Builder<E>(newTableSize)
+                                            .probingOverheadFactor(this.probingOverheadFactor)
+                                            .with(flat, size);
+                                } else {
+                                    return new SetBackedSet.Builder<E>(this.size).with(flat, size);
                                 }
                             }
-
-                            return this;
                         }
+
+                        return this;
                     }
                 }
             }
@@ -823,14 +822,18 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         static class Builder<E> extends IndexedImmutableSetImpl.InternalBuilder<E> {
             private final HashMap<E, Integer> delegate;
             private E[] flat;
+            private final int expectedCapacity;
 
             Builder(int expectedCapacity) {
                 this.delegate = new HashMap<>(expectedCapacity);
+                this.expectedCapacity = expectedCapacity;
             }
 
             Builder(Collection<E> set) {
-                this.delegate = new HashMap<>(set.size());
-                this.flat = GenericArrays.create(set.size());
+                int size = set.size();
+                this.delegate = new HashMap<>(size);
+                this.flat = GenericArrays.create(size);
+                this.expectedCapacity = size;
 
                 int i = 0;
 
@@ -897,7 +900,9 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
             }
 
             private void extendFlat() {
-                if (delegate.size() >= flat.length) {
+                if (flat == null) {
+                    this.flat = GenericArrays.create(this.expectedCapacity);
+                } else if (delegate.size() >= flat.length) {
                     this.flat = GenericArrays.extend(flat, flat.length + flat.length / 2 + 8);
                 }
             }

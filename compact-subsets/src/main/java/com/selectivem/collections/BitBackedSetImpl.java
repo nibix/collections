@@ -31,8 +31,7 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
         private final IndexedImmutableSetImpl<E> elementToIndexMap;
         private final int bitArrayOffset;
 
-        LongArrayBacked(
-                long[] bits, int size, IndexedImmutableSetImpl<E> elementToIndexMap, int bitArrayOffset) {
+        LongArrayBacked(long[] bits, int size, IndexedImmutableSetImpl<E> elementToIndexMap, int bitArrayOffset) {
             this.bits = bits;
             this.size = size;
             this.elementToIndexMap = elementToIndexMap;

@@ -15,11 +15,10 @@
  */
 package com.selectivem.collections;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class BitBackedSetImplTest {
     @Test
@@ -50,19 +49,22 @@ public class BitBackedSetImplTest {
 
     @Test
     public void empty_arrayBacked() {
-        BitBackedSetImpl.LongArrayBacked<String> subject = new BitBackedSetImpl.LongArrayBacked<>(new long [] {0}, 0, IndexedImmutableSetImpl.of("a"), 0);
+        BitBackedSetImpl.LongArrayBacked<String> subject =
+                new BitBackedSetImpl.LongArrayBacked<>(new long[] {0}, 0, IndexedImmutableSetImpl.of("a"), 0);
         Assert.assertTrue(subject.isEmpty());
     }
 
     @Test
     public void empty_longBacked() {
-        BitBackedSetImpl.LongBacked<String> subject = new BitBackedSetImpl.LongBacked<>(0, 0, IndexedImmutableSetImpl.of("a"), 0);
+        BitBackedSetImpl.LongBacked<String> subject =
+                new BitBackedSetImpl.LongBacked<>(0, 0, IndexedImmutableSetImpl.of("a"), 0);
         Assert.assertTrue(subject.isEmpty());
     }
 
     @Test
     public void contains_arrayBacked() {
-        BitBackedSetImpl.LongArrayBacked<String> subject = new BitBackedSetImpl.LongArrayBacked<>(new long [] {1}, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
+        BitBackedSetImpl.LongArrayBacked<String> subject =
+                new BitBackedSetImpl.LongArrayBacked<>(new long[] {1}, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
         Assert.assertTrue(subject.contains("a"));
         Assert.assertFalse(subject.contains("b"));
         Assert.assertFalse(subject.contains("x"));
@@ -70,7 +72,8 @@ public class BitBackedSetImplTest {
 
     @Test
     public void contains_longBacked() {
-        BitBackedSetImpl.LongBacked<String> subject = new BitBackedSetImpl.LongBacked<>(1, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
+        BitBackedSetImpl.LongBacked<String> subject =
+                new BitBackedSetImpl.LongBacked<>(1, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
         Assert.assertTrue(subject.contains("a"));
         Assert.assertFalse(subject.contains("b"));
         Assert.assertFalse(subject.contains("x"));
@@ -78,7 +81,7 @@ public class BitBackedSetImplTest {
 
     @Test
     public void setBit() {
-        long [] bits = new long[2];
+        long[] bits = new long[2];
         boolean returnValue = BitBackedSetImpl.setBit(bits, 1, 0);
         Assert.assertTrue(returnValue);
         Assert.assertEquals(2, bits[0]);
@@ -92,7 +95,8 @@ public class BitBackedSetImplTest {
 
     @Test(expected = NoSuchElementException.class)
     public void iterator_exhausted_arrayBacked() {
-        BitBackedSetImpl.LongArrayBacked<String> subject = new BitBackedSetImpl.LongArrayBacked<>(new long [] {1}, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
+        BitBackedSetImpl.LongArrayBacked<String> subject =
+                new BitBackedSetImpl.LongArrayBacked<>(new long[] {1}, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
         Iterator<String> iter = subject.iterator();
 
         while (iter.hasNext()) {
@@ -104,7 +108,8 @@ public class BitBackedSetImplTest {
 
     @Test(expected = NoSuchElementException.class)
     public void iterator_exhausted_longBacked() {
-        BitBackedSetImpl.LongBacked<String> subject = new BitBackedSetImpl.LongBacked<>(1, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
+        BitBackedSetImpl.LongBacked<String> subject =
+                new BitBackedSetImpl.LongBacked<>(1, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
         Iterator<String> iter = subject.iterator();
 
         while (iter.hasNext()) {

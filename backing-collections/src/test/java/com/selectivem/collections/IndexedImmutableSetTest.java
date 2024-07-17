@@ -515,6 +515,28 @@ public class IndexedImmutableSetTest {
             Assert.assertEquals(reference, builder.build());
         }
 
+        @Test
+        public void builder_toString_setBacked() {
+            IndexedImmutableSetImpl.InternalBuilder<String> builder =
+                    IndexedImmutableSetImpl.<String>builder(5000).with("a");
+            Assert.assertEquals("[a]", builder.toString());
+        }
+
+        @Test
+        public void builder_contains_setBacked() {
+            IndexedImmutableSetImpl.InternalBuilder<String> builder =
+                    IndexedImmutableSetImpl.<String>builder(5000).with("a");
+            Assert.assertTrue(builder.contains("a"));
+            Assert.assertFalse(builder.contains("b"));
+        }
+
+        @Test
+        public void builder_empty_setBacked() {
+            IndexedImmutableSetImpl.InternalBuilder<String> builder = IndexedImmutableSetImpl.<String>builder(5000);
+            Assert.assertEquals(0, builder.size());
+            Assert.assertEquals(IndexedImmutableSetImpl.empty(), builder.build());
+        }
+
         @Test(expected = IllegalArgumentException.class)
         public void of3_null() {
             IndexedImmutableSetImpl.of(new HashSet<>(Arrays.asList("a", "b", null)));
@@ -534,6 +556,16 @@ public class IndexedImmutableSetTest {
         @Test
         public void isEmpty() {
             Assert.assertEquals(reference.isEmpty(), subject.isEmpty());
+        }
+
+        @Test
+        public void contains_positive() {
+            Assert.assertEquals(reference.contains("a"), subject.contains("a"));
+        }
+
+        @Test
+        public void contains_negative() {
+            Assert.assertEquals(reference.contains("ä"), subject.contains("ä"));
         }
 
         @Test

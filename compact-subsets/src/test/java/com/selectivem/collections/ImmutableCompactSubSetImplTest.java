@@ -15,14 +15,14 @@
  */
 package com.selectivem.collections;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -63,7 +63,29 @@ public class ImmutableCompactSubSetImplTest {
             }
         };
 
-        Object [] testArray = new Object[0];
+        Spliterator<String> testSpliterator = new Spliterator<String>() {
+            @Override
+            public boolean tryAdvance(Consumer<? super String> action) {
+                return false;
+            }
+
+            @Override
+            public Spliterator<String> trySplit() {
+                return null;
+            }
+
+            @Override
+            public long estimateSize() {
+                return 0;
+            }
+
+            @Override
+            public int characteristics() {
+                return 0;
+            }
+        };
+
+        Object[] testArray = new Object[0];
 
         Stream<String> testStream = Stream.of("a");
 
@@ -112,6 +134,11 @@ public class ImmutableCompactSubSetImplTest {
             public Stream<String> stream() {
                 return testStream;
             }
+
+            @Override
+            public Spliterator<String> spliterator() {
+                return testSpliterator;
+            }
         };
 
         ImmutableCompactSubSet<String> subject = ImmutableCompactSubSetImpl.of(delegate);
@@ -123,6 +150,7 @@ public class ImmutableCompactSubSetImplTest {
         Assert.assertSame(delegate.toArray(new String[0]), subject.toArray(new String[0]));
         Assert.assertSame(delegate.parallelStream(), subject.parallelStream());
         Assert.assertSame(delegate.stream(), subject.stream());
+        Assert.assertSame(delegate.spliterator(), subject.spliterator());
     }
 
     static Set<String> setOf(String... elements) {
