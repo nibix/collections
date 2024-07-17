@@ -15,9 +15,14 @@
  */
 package com.selectivem.collections;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Stream;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,6 +47,82 @@ public class ImmutableCompactSubSetImplTest {
         Assert.assertEquals(instance1.toString(), instance2.toString());
         Assert.assertEquals(instance1.isEmpty(), instance2.isEmpty());
         Assert.assertArrayEquals(instance1.toArray(), instance2.toArray());
+    }
+
+    @Test
+    public void delegateMethods() {
+        Iterator<String> testIterator = new Iterator<String>() {
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public String next() {
+                return "";
+            }
+        };
+
+        Object [] testArray = new Object[0];
+
+        Stream<String> testStream = Stream.of("a");
+
+        UnmodifiableSet<String> delegate = new UnmodifiableSet<String>() {
+            @Override
+            public int size() {
+                return 9999;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return false;
+            }
+
+            @Override
+            public Iterator<String> iterator() {
+                return testIterator;
+            }
+
+            @Override
+            public Object[] toArray() {
+                return testArray;
+            }
+
+            @Override
+            public <T> T[] toArray(T[] a) {
+                return (T[]) testArray;
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                return false;
+            }
+
+            @Override
+            public Stream<String> parallelStream() {
+                return testStream;
+            }
+
+            @Override
+            public Stream<String> stream() {
+                return testStream;
+            }
+        };
+
+        ImmutableCompactSubSet<String> subject = ImmutableCompactSubSetImpl.of(delegate);
+
+        Assert.assertEquals(delegate.size(), subject.size());
+        Assert.assertEquals(delegate.isEmpty(), subject.isEmpty());
+        Assert.assertSame(delegate.iterator(), subject.iterator());
+        Assert.assertSame(delegate.toArray(), subject.toArray());
+        Assert.assertSame(delegate.toArray(new String[0]), subject.toArray(new String[0]));
+        Assert.assertSame(delegate.parallelStream(), subject.parallelStream());
+        Assert.assertSame(delegate.stream(), subject.stream());
     }
 
     static Set<String> setOf(String... elements) {

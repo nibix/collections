@@ -76,6 +76,19 @@ public class BitBackedSetImplTest {
         Assert.assertFalse(subject.contains("x"));
     }
 
+    @Test
+    public void setBit() {
+        long [] bits = new long[2];
+        boolean returnValue = BitBackedSetImpl.setBit(bits, 1, 0);
+        Assert.assertTrue(returnValue);
+        Assert.assertEquals(2, bits[0]);
+        returnValue = BitBackedSetImpl.setBit(bits, 1, 0);
+        Assert.assertFalse(returnValue);
+        Assert.assertEquals(2, bits[0]);
+        returnValue = BitBackedSetImpl.setBit(bits, 65, 0);
+        Assert.assertTrue(returnValue);
+        Assert.assertEquals(2, bits[1]);
+    }
 
     @Test(expected = NoSuchElementException.class)
     public void iterator_exhausted_arrayBacked() {
