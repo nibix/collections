@@ -122,6 +122,10 @@ public class CompactMapGroupBuilder<K, V> {
             return value;
         }
 
+        public int size() {
+            return this.size;
+        }
+
         public Map<K, V> build() {
             if (size == 0) {
                 return ImmutableMapImpl.empty();
