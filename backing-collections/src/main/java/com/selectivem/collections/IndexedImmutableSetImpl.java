@@ -593,7 +593,6 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                             // done
                             return this;
                         } else if (check == Hashing.NO_SPACE) {
-                            // collision
                             int newTableSize = Hashing.nextSize(tableSize);
                             if (newTableSize != -1) {
                                 return new Builder<E>(newTableSize)

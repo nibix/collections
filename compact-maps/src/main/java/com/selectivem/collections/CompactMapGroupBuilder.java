@@ -79,6 +79,7 @@ public class CompactMapGroupBuilder<K, V> {
         private int size = 0;
         private int minIndex = Integer.MAX_VALUE;
         private int maxIndex = Integer.MIN_VALUE;
+        private int estimatedSize = 36;
 
         MapBuilder(CompactMapGroupBuilder<K, V> root, Function<K, V> missingValueSupplier) {
             this.root = root;
@@ -127,31 +128,55 @@ public class CompactMapGroupBuilder<K, V> {
         }
 
         public Map<K, V> build() {
+            return build(null);
+        }
+
+        public <V2> Map<K, V2> build(Function<V, V2> valueMappingFunction) {
             if (size == 0) {
                 return ImmutableMapImpl.empty();
             } else if (size == 1) {
                 int i = findNext(0);
-                V value = this.values[i];
+                V2 value = mapValue(this.values[i], valueMappingFunction);
                 K key = this.root.keyToIndexMap.indexToElement(i);
                 return ImmutableMapImpl.of(key, value);
             } else if (size == 2) {
                 int i = findNext(0);
-                V v1 = this.values[i];
+                V2 v1 = mapValue(this.values[i], valueMappingFunction);
                 K k1 = this.root.keyToIndexMap.indexToElement(i);
                 i = findNext(i + 1);
-                V v2 = this.values[i];
+                V2 v2 = mapValue(this.values[i], valueMappingFunction);
                 K k2 = this.root.keyToIndexMap.indexToElement(i);
                 return ImmutableMapImpl.of(k1, v1, k2, v2);
             } else {
-                V[] compactedValues;
+                V2[] mappedValues = GenericArrays.mapInPlace(this.values, valueMappingFunction);
+
+                int estimatedIndexRefMapSize = this.estimatedSize;
+
+                if (minIndex > 4 || maxIndex < values.length - 5) {
+                    estimatedIndexRefMapSize -= (minIndex + (values.length - maxIndex)) * 8;
+                }
+
+                int estimatedBasicHashTableSize = ImmutableMapImpl.HashArrayBackedMap.getEstimatedByteSize(size);
+
+                if (estimatedBasicHashTableSize < estimatedIndexRefMapSize) {
+                    ImmutableMapImpl<K, V2> basicHashTable =
+                            buildBasicHashTable(mappedValues, estimatedIndexRefMapSize);
+
+                    if (basicHashTable != null && basicHashTable.getEstimatedByteSize() < estimatedIndexRefMapSize) {
+                        root.estimatedBackingArraySize += basicHashTable.getEstimatedByteSize() - this.estimatedSize;
+                        return basicHashTable;
+                    }
+                }
+
+                V2[] compactedValues;
                 int valuesArrayOffset;
 
                 if (minIndex > 4 || maxIndex < values.length - 5) {
                     compactedValues = GenericArrays.create(maxIndex - minIndex + 1);
-                    System.arraycopy(this.values, minIndex, compactedValues, 0, maxIndex - minIndex + 1);
+                    System.arraycopy(mappedValues, minIndex, compactedValues, 0, maxIndex - minIndex + 1);
                     valuesArrayOffset = minIndex;
                 } else {
-                    compactedValues = values;
+                    compactedValues = mappedValues;
                     valuesArrayOffset = 0;
                 }
 
@@ -174,8 +199,10 @@ public class CompactMapGroupBuilder<K, V> {
 
             if (this.size <= 2) {
                 this.root.estimatedBackingArraySize += 8;
+                this.estimatedSize += 8;
             } else if (this.size == 3) {
                 this.root.estimatedBackingArraySize += (this.values.length - 2) * 8;
+                this.estimatedSize += (this.values.length - 2) * 8;
             }
         }
 
@@ -187,6 +214,34 @@ public class CompactMapGroupBuilder<K, V> {
             }
 
             return -1;
+        }
+
+        private <V2> ImmutableMapImpl<K, V2> buildBasicHashTable(V2[] values, int maxByteSize) {
+            ImmutableMapImpl.InternalBuilder<K, V2> builder = ImmutableMapImpl.InternalBuilder.create(size);
+
+            for (int i = 0; i < values.length; i++) {
+                V2 value = values[i];
+
+                if (value != null) {
+                    builder.with(this.root.keyToIndexMap.indexToElement(i), value);
+
+                    if (builder.getEstimatedByteSize() > maxByteSize) {
+                        return null;
+                    }
+                }
+            }
+
+            return builder.build();
+        }
+
+        private static <V, V2> V2 mapValue(V value, Function<V, V2> valueMappingFunction) {
+            if (valueMappingFunction == null) {
+                @SuppressWarnings("unchecked")
+                V2 value2 = (V2) value;
+                return value2;
+            } else {
+                return valueMappingFunction.apply(value);
+            }
         }
     }
 }

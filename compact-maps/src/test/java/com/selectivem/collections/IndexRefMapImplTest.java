@@ -28,8 +28,7 @@ public class IndexRefMapImplTest {
         IndexRefMapImpl<String, String> subject =
                 new IndexRefMapImpl<>(new String[] {"1", "2"}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
         Assert.assertEquals("[a=1, b=2]", subject.toString());
-        subject =
-                new IndexRefMapImpl<>(new String[] {"1"}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
+        subject = new IndexRefMapImpl<>(new String[] {"1"}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
         Assert.assertEquals("[a=1]", subject.toString());
     }
 
@@ -73,6 +72,4 @@ public class IndexRefMapImplTest {
 
         iter.next();
     }
-
-
 }

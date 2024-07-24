@@ -15,6 +15,8 @@
  */
 package com.selectivem.collections;
 
+import java.util.function.Function;
+
 class GenericArrays {
 
     @SuppressWarnings("unchecked")
@@ -55,6 +57,35 @@ class GenericArrays {
                 : (T[]) java.lang.reflect.Array.newInstance(target.getClass().getComponentType(), size);
 
         System.arraycopy(source, 0, result, 0, size);
+        return result;
+    }
+
+    static int indexOfNextNonNull(Object[] array, int start) {
+        for (int i = start; i < array.length; i++) {
+            if (array[i] != null) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    static <V, V2> V2[] mapInPlace(V[] array, Function<V, V2> mappingFunction) {
+        if (array == null) {
+            return null;
+        }
+
+        @SuppressWarnings("unchecked")
+        V2[] result = (V2[]) array;
+
+        if (mappingFunction != null) {
+            for (int i = 0; i < array.length; i++) {
+                if (array[i] != null) {
+                    result[i] = mappingFunction.apply(array[i]);
+                }
+            }
+        }
+
         return result;
     }
 }

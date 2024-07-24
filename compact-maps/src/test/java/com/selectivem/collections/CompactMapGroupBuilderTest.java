@@ -21,10 +21,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Set;
 import org.junit.Assert;
@@ -56,32 +54,28 @@ public class CompactMapGroupBuilderTest {
 
         @Test
         public void containsValue_positive() {
-            CompactMapGroupBuilder<String, String> subject =
-                    new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
+            CompactMapGroupBuilder<String, String> subject = new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
             Map<String, String> map = subject.of(mapOf("a", "aa", "b", "bb"));
             Assert.assertTrue(map.containsValue("aa"));
         }
 
         @Test
         public void containsValue_negative() {
-            CompactMapGroupBuilder<String, String> subject =
-                    new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
+            CompactMapGroupBuilder<String, String> subject = new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
             Map<String, String> map = subject.of(mapOf("a", "aa", "b", "bb"));
             Assert.assertFalse(map.containsValue("zz"));
         }
 
         @Test
         public void isEmpty() {
-            CompactMapGroupBuilder<String, String> subject =
-                    new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
+            CompactMapGroupBuilder<String, String> subject = new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
             Map<String, String> map = subject.of(mapOf("a", "aa", "b", "bb"));
             Assert.assertFalse(map.isEmpty());
         }
 
         @Test
         public void builder_put_existing() {
-            CompactMapGroupBuilder<String, String> subject =
-                    new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
+            CompactMapGroupBuilder<String, String> subject = new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
             CompactMapGroupBuilder.MapBuilder<String, String> builder = subject.createMapBuilder();
             Assert.assertEquals(0, builder.size());
             builder.put("a", "aa");
@@ -97,26 +91,21 @@ public class CompactMapGroupBuilderTest {
 
         @Test(expected = IllegalArgumentException.class)
         public void builder_put_invalidKey() {
-            CompactMapGroupBuilder<String, String> subject =
-                    new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
+            CompactMapGroupBuilder<String, String> subject = new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
             subject.createMapBuilder().put("x", "y");
         }
 
         @Test(expected = IllegalArgumentException.class)
         public void builder_put_null() {
-            CompactMapGroupBuilder<String, String> subject =
-                    new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
+            CompactMapGroupBuilder<String, String> subject = new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
             subject.createMapBuilder().put("a", null);
         }
 
         @Test(expected = IllegalArgumentException.class)
         public void builder_get_invalidKey() {
-            CompactMapGroupBuilder<String, String> subject =
-                    new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
+            CompactMapGroupBuilder<String, String> subject = new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
             subject.createMapBuilder(k -> "a").get("x");
         }
-
-
     }
 
     @RunWith(Parameterized.class)
@@ -180,7 +169,6 @@ public class CompactMapGroupBuilderTest {
                 }
             }
         }
-
 
         @Test
         public void get() {
