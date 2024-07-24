@@ -15,6 +15,7 @@
  */
 package com.selectivem.collections;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -66,7 +67,7 @@ public class CompactMapGroupBuilderTest {
             CompactMapGroupBuilder<String, String> subject =
                     new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
             Map<String, String> map = subject.of(mapOf("a", "aa", "b", "bb"));
-            Assert.assertTrue(map.containsValue("zz"));
+            Assert.assertFalse(map.containsValue("zz"));
         }
 
         @Test
@@ -162,6 +163,24 @@ public class CompactMapGroupBuilderTest {
                 }
             }
         }
+
+        @Test
+        public void entrySet_contains() {
+            Map<String, String> map = subject.of(referenceMap);
+
+            for (String key : keySuperSet) {
+                if (referenceMap.containsKey(key)) {
+                    Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<>(key, referenceMap.get(key));
+                    Assert.assertTrue(map.entrySet().contains(entry));
+                    Map.Entry<String, String> wrongEntry = new AbstractMap.SimpleEntry<>(key, "xxxx");
+                    Assert.assertFalse(map.entrySet().contains(wrongEntry));
+                } else {
+                    Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<>(key, "xxxx");
+                    Assert.assertFalse(map.entrySet().contains(entry));
+                }
+            }
+        }
+
 
         @Test
         public void get() {

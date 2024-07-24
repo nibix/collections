@@ -33,6 +33,21 @@ public class IndexRefMapImplTest {
         Assert.assertEquals("[a=1]", subject.toString());
     }
 
+    @Test
+    public void containsValue() {
+        IndexRefMapImpl<String, String> subject =
+                new IndexRefMapImpl<>(new String[] {"1", "2"}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
+        Assert.assertTrue(subject.containsValue("1"));
+        Assert.assertFalse(subject.containsValue("x"));
+    }
+
+    @Test
+    public void get_keySuperSetMiss() {
+        IndexRefMapImpl<String, String> subject =
+                new IndexRefMapImpl<>(new String[] {"1", "2"}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
+        Assert.assertNull(subject.get("x"));
+    }
+
     @Test(expected = NoSuchElementException.class)
     public void entrySet_iterator_exhausted() {
         IndexRefMapImpl<String, String> subject =
@@ -58,4 +73,6 @@ public class IndexRefMapImplTest {
 
         iter.next();
     }
+
+
 }
