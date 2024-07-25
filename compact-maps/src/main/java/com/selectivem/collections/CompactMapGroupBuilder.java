@@ -223,7 +223,7 @@ public class CompactMapGroupBuilder<K, V> {
                 V2 value = values[i];
 
                 if (value != null) {
-                    builder.with(this.root.keyToIndexMap.indexToElement(i), value);
+                    builder = builder.with(this.root.keyToIndexMap.indexToElement(i), value);
 
                     if (builder.getEstimatedByteSize() > maxByteSize) {
                         return null;
