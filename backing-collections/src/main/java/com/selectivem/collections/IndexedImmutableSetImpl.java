@@ -50,8 +50,8 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
             return new ArrayBackedSet<>(set);
         } else {
             int hashTableSize = Hashing.hashTableSize(size);
-            if (hashTableSize != -1) {
-                IndexedImmutableSetImpl.InternalBuilder<E> internalBuilder =
+            if (hashTableSize != -1 && set.size() < HashArrayBackedSet.MAX_CAPACITY) {
+                InternalBuilder<E> internalBuilder =
                         new HashArrayBackedSet.Builder<>(hashTableSize, size);
 
                 for (E e : set) {
@@ -68,7 +68,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
     static <E> IndexedImmutableSetImpl.InternalBuilder<E> builder(int size) {
         int hashTableSize = Hashing.hashTableSize(size);
 
-        if (hashTableSize != -1) {
+        if (hashTableSize != -1 && size < HashArrayBackedSet.MAX_CAPACITY) {
             return new HashArrayBackedSet.Builder<>(hashTableSize, size);
         } else {
             return new SetBackedSet.Builder<>(size);
@@ -427,6 +427,8 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
 
     static final class HashArrayBackedSet<E> extends IndexedImmutableSetImpl<E> {
 
+        static final int MAX_CAPACITY = Short.MAX_VALUE;
+
         final int tableSize;
         private final int size;
         private final short maxProbingDistance;
@@ -578,6 +580,13 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                     size++;
                     return this;
                 } else {
+                    if (size == MAX_CAPACITY) {
+                        // This collection reached it capacity
+                        return new SetBackedSet.Builder<E>(this.size)
+                                .with(flat, size)
+                                .with(e);
+                    }
+
                     int position = hashPosition(e);
 
                     if (table[position] == null) {
