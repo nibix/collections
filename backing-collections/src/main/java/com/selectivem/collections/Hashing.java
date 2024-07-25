@@ -17,7 +17,6 @@ package com.selectivem.collections;
 
 abstract class Hashing {
 
-    static final int COLLISION_HEAD_ROOM = 12;
     static final int NO_SPACE = Integer.MAX_VALUE;
     static final int B4 = 0b0000_00001111; // 0x0f
     static final int B5 = 0b0000_00011111; // 0x1f
@@ -57,13 +56,13 @@ abstract class Hashing {
                 hash = scramble(hash);
                 return hashTo8bit(hash);
             case 0x200: // 512
-                hash = scramble(hash);
+                hash = scramble2(scramble(hash));
                 return (hash & B9) ^ (hash >> 9 & B7) ^ (hash >> 16 & B9) ^ (hash >> 25 & B7);
             case 0x400: // 1024
-                hash = scramble(hash);
+                hash = scramble2(scramble(hash));
                 return (hash & B10) ^ (hash >> 10 & B6) ^ (hash >> 16 & B10) ^ (hash >> 26 & B6);
             case 0x800: // 2048
-                hash = scramble(hash);
+                hash = scramble2(scramble(hash));
                 return (hash & B11) ^ (hash >> 11 & B10) ^ (hash >> 21 & B11);
             case 0x1000: // 4096
                 hash = scramble2(scramble(hash));
@@ -164,20 +163,34 @@ abstract class Hashing {
         }
     }
 
+    static short maxProbingDistance(int tableSize) {
+        if (tableSize <= 0x10) {
+            return 8;
+        } else if (tableSize <= 0x200) {
+            return 12;
+        } else if (tableSize <= 0x1000) {
+            return 16;
+        } else if (tableSize <= 0x8000) {
+            return 24;
+        } else {
+            return 32;
+        }
+    }
+
     /**
      * Checks whether the given element is contained in the table or whether it can be inserted.
      *
      * Returns NO_SPACE if it cannot be inserted. If it returns a value >= 0, it is not contained and can be inserted at
      * the given position. If it returns a value < 0, the actual position can be calculated as -returnValue - 1.
      */
-    static <E> int checkTable(E[] table, Object e, int hashPosition) {
+    static <E> int checkTable(E[] table, Object e, int hashPosition, short maxProbingDistance) {
         if (table[hashPosition] == null) {
             return hashPosition;
         } else if (table[hashPosition].equals(e)) {
             return -1 - hashPosition;
         }
 
-        int max = hashPosition + COLLISION_HEAD_ROOM;
+        int max = hashPosition + maxProbingDistance;
 
         for (int i = hashPosition + 1; i <= max; i++) {
             if (table[i] == null) {

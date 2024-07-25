@@ -263,15 +263,17 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
 
         final int tableSize;
         final int size;
+        final short maxProbingDistance;
 
         private final K[] keyTable;
         private final V[] valueTable;
 
         private List<V> valuesCollection;
 
-        HashArrayBackedMap(int tableSize, int size, K[] keyTable, V[] valueTable) {
+        HashArrayBackedMap(int tableSize, int size, short maxProbingDistance, K[] keyTable, V[] valueTable) {
             this.tableSize = tableSize;
             this.size = size;
+            this.maxProbingDistance = maxProbingDistance;
             this.keyTable = keyTable;
             this.valueTable = valueTable;
             assert size != 0;
@@ -451,7 +453,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
         }
 
         private int checkTable(Object key, int hashPosition) {
-            return Hashing.checkTable(this.keyTable, key, hashPosition);
+            return Hashing.checkTable(this.keyTable, key, hashPosition, this.maxProbingDistance);
         }
 
         private int findNextKey(int start) {
@@ -472,9 +474,11 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
             private final int tableSize;
             private int probingOverhead;
             private short probingOverheadFactor = 3;
+            private final short maxProbingDistance;
 
             Builder(int tableSize) {
                 this.tableSize = tableSize;
+                this.maxProbingDistance = Hashing.maxProbingDistance(tableSize);
             }
 
             InternalBuilder<K, V> with(K key, V value) {
@@ -487,8 +491,8 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
 
             private InternalBuilder<K, V> with(K key, V value, int pos) {
                 if (keyTable == null) {
-                    keyTable = GenericArrays.create(tableSize + Hashing.COLLISION_HEAD_ROOM);
-                    valueTable = GenericArrays.create(tableSize + Hashing.COLLISION_HEAD_ROOM);
+                    keyTable = GenericArrays.create(tableSize + maxProbingDistance);
+                    valueTable = GenericArrays.create(tableSize + maxProbingDistance);
 
                     keyTable[pos] = key;
                     valueTable[pos] = value;
@@ -507,7 +511,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
                     } else {
                         // collision
 
-                        int check = Hashing.checkTable(keyTable, key, pos);
+                        int check = Hashing.checkTable(keyTable, key, pos, maxProbingDistance);
 
                         if (check < 0) {
                             // contained
@@ -568,7 +572,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
                     return null;
                 }
 
-                int check = Hashing.checkTable(keyTable, key, hashPosition(key));
+                int check = Hashing.checkTable(keyTable, key, hashPosition(key), maxProbingDistance);
 
                 if (check < 0) {
                     int actualPos = -check - 1;
@@ -647,7 +651,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
 
                     return new TwoElementMap<>(key1, value1, key2, value2);
                 } else {
-                    return new HashArrayBackedMap<>(tableSize, size, keyTable, valueTable);
+                    return new HashArrayBackedMap<>(tableSize, size, maxProbingDistance, keyTable, valueTable);
                 }
             }
 
@@ -669,7 +673,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
                     return new TwoElementMap<>(key1, value1, key2, value2);
                 } else {
                     return new HashArrayBackedMap<>(
-                            tableSize, size, keyTable, GenericArrays.mapInPlace(valueTable, valueMappingFunction));
+                            tableSize, size, maxProbingDistance, keyTable, GenericArrays.mapInPlace(valueTable, valueMappingFunction));
                 }
             }
 

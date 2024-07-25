@@ -429,15 +429,17 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
 
         final int tableSize;
         private final int size;
+        private final short maxProbingDistance;
 
         private final E[] table;
         private final E[] flat;
         private final short[] indices;
 
-        HashArrayBackedSet(int tableSize, int size, E[] table, short[] indices, E[] flat) {
+        HashArrayBackedSet(int tableSize, int size,  short maxProbingDistance, E[] table, short[] indices, E[] flat) {
             super(size);
             this.tableSize = tableSize;
             this.size = size;
+            this.maxProbingDistance = maxProbingDistance;
             this.table = table;
             this.indices = indices;
             this.flat = flat;
@@ -468,7 +470,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                 return indices[hashPosition];
             }
 
-            int max = hashPosition + Hashing.COLLISION_HEAD_ROOM;
+            int max = hashPosition + maxProbingDistance;
 
             for (int i = hashPosition + 1; i <= max; i++) {
                 if (table[i] == null) {
@@ -530,7 +532,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         int checkTable(Object e, int hashPosition) {
-            return Hashing.checkTable(table, e, hashPosition);
+            return Hashing.checkTable(table, e, hashPosition, maxProbingDistance);
         }
 
         static class Builder<E> extends IndexedImmutableSetImpl.InternalBuilder<E> {
@@ -541,13 +543,16 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
             private int probingOverhead;
             private short probingOverheadFactor = 3;
             private final int tableSize;
+            private final short maxProbingDistance;
 
             public Builder(int tableSize) {
                 this.tableSize = tableSize;
+                this.maxProbingDistance = Hashing.maxProbingDistance(tableSize);
             }
 
             public Builder(int tableSize, int flatSize) {
                 this.tableSize = tableSize;
+                this.maxProbingDistance = Hashing.maxProbingDistance(tableSize);
                 if (flatSize > 0) {
                     this.flat = GenericArrays.create(flatSize);
                 }
@@ -560,8 +565,8 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
 
                 if (table == null) {
                     int hashPosition = hashPosition(e);
-                    table = GenericArrays.create(tableSize + Hashing.COLLISION_HEAD_ROOM);
-                    indices = new short[tableSize + Hashing.COLLISION_HEAD_ROOM];
+                    table = GenericArrays.create(tableSize + this.maxProbingDistance);
+                    indices = new short[tableSize + this.maxProbingDistance];
 
                     if (flat == null) {
                         flat = GenericArrays.create(tableSize <= 64 ? tableSize : tableSize / 2);
@@ -660,7 +665,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                         flat = GenericArrays.create(size);
                         System.arraycopy(this.flat, 0, flat, 0, size);
                     }
-                    return new HashArrayBackedSet<>(tableSize, size, table, indices, flat);
+                    return new HashArrayBackedSet<>(tableSize, size, maxProbingDistance, table, indices, flat);
                 }
             }
 
@@ -717,7 +722,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
             }
 
             int checkTable(Object e, int hashPosition) {
-                int max = hashPosition + Hashing.COLLISION_HEAD_ROOM;
+                int max = hashPosition + this.maxProbingDistance;
 
                 for (int i = hashPosition + 1; i <= max; i++) {
                     if (table[i] == null) {
@@ -736,7 +741,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
                     return false;
                 } else {
                     int hashPosition = hashPosition(o);
-                    int max = hashPosition + Hashing.COLLISION_HEAD_ROOM;
+                    int max = hashPosition + this.maxProbingDistance;
 
                     for (int i = hashPosition; i <= max; i++) {
                         if (table[i] == null) {
