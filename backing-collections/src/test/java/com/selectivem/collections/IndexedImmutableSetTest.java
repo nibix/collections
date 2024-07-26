@@ -447,13 +447,13 @@ public class IndexedImmutableSetTest {
         @Test
         public void containsAll_negative() {
             HashSet<String> more = new HashSet<>(reference);
-            more.add("xyz");
+            more.add("deos_not_exist");
             Assert.assertFalse(subject.containsAll(more));
         }
 
         @Test
         public void elementToIndex_notExists() {
-            Assert.assertEquals(-1, subject.elementToIndex("xyz"));
+            Assert.assertEquals(-1, subject.elementToIndex("does_not_exist"));
         }
 
         @Test
@@ -572,6 +572,10 @@ public class IndexedImmutableSetTest {
             result.add(new Object[] {set4000, IndexedImmutableSetImpl.of(set4000)});
             Set<String> set5000 = stringSet(5000);
             result.add(new Object[] {set5000, IndexedImmutableSetImpl.of(set5000)});
+            Set<String> set16000 = stringSet(16000);
+            result.add(new Object[] {set16000, IndexedImmutableSetImpl.of(set16000)});
+            Set<String> set33000 = stringSet(33000);
+            result.add(new Object[] {set33000, IndexedImmutableSetImpl.of(set33000)});
             return result;
         }
 

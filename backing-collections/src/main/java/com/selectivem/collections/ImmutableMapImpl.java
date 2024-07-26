@@ -360,7 +360,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
             if (result == null) {
                 ArrayList<V> list = new ArrayList<>(this.size);
 
-                for (int i = 0; i < tableSize; i++) {
+                for (int i = 0; i < this.keyTable.length; i++) {
                     if (this.keyTable[i] != null) {
                         list.add(this.valueTable[i]);
                     }
@@ -475,6 +475,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
             private int probingOverhead;
             private short probingOverheadFactor = 3;
             private final short maxProbingDistance;
+            private boolean valid = true;
 
             Builder(int tableSize) {
                 this.tableSize = tableSize;
@@ -519,16 +520,20 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
                             valueTable[actualPos] = value;
                             return this;
                         } else if (check == Hashing.NO_SPACE) {
-                            int newTableSize = Hashing.nextSize(tableSize);
-                            if (newTableSize != -1) {
-                                return new Builder<K, V>(newTableSize)
-                                        .probingOverheadFactor(probingOverheadFactor)
-                                        .withNonNull(keyTable, valueTable)
-                                        .with(key, value);
-                            } else {
-                                return new ImmutableMapImpl.MapBackedMap.Builder<K, V>(this.size)
-                                        .withNonNull(keyTable, valueTable)
-                                        .with(key, value);
+                            try {
+                                int newTableSize = Hashing.nextSize(tableSize);
+                                if (newTableSize != -1) {
+                                    return new Builder<K, V>(newTableSize)
+                                            .probingOverheadFactor(probingOverheadFactor)
+                                            .withNonNull(keyTable, valueTable)
+                                            .with(key, value);
+                                } else {
+                                    return new ImmutableMapImpl.MapBackedMap.Builder<K, V>(this.size)
+                                            .withNonNull(keyTable, valueTable)
+                                            .with(key, value);
+                                }
+                            } finally {
+                                this.valid = false;
                             }
                         } else {
                             keyTable[check] = key;
@@ -539,14 +544,18 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
 
                             if (this.size >= 12 && this.probingOverhead > this.size * this.probingOverheadFactor) {
                                 // probing overhead exceeds threshold
-                                int newTableSize = Hashing.nextSize(tableSize);
-                                if (newTableSize != -1) {
-                                    return new ImmutableMapImpl.HashArrayBackedMap.Builder<K, V>(newTableSize)
-                                            .probingOverheadFactor(this.probingOverheadFactor)
-                                            .withNonNull(keyTable, valueTable);
-                                } else {
-                                    return new ImmutableMapImpl.MapBackedMap.Builder<K, V>(this.size)
-                                            .withNonNull(keyTable, valueTable);
+                                try {
+                                    int newTableSize = Hashing.nextSize(tableSize);
+                                    if (newTableSize != -1) {
+                                        return new ImmutableMapImpl.HashArrayBackedMap.Builder<K, V>(newTableSize)
+                                                .probingOverheadFactor(this.probingOverheadFactor)
+                                                .withNonNull(keyTable, valueTable);
+                                    } else {
+                                        return new ImmutableMapImpl.MapBackedMap.Builder<K, V>(this.size)
+                                                .withNonNull(keyTable, valueTable);
+                                    }
+                                } finally {
+                                    this.valid = false;
                                 }
                             }
 
@@ -651,6 +660,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
 
                     return new TwoElementMap<>(key1, value1, key2, value2);
                 } else {
+                    this.valid = false;
                     return new HashArrayBackedMap<>(tableSize, size, maxProbingDistance, keyTable, valueTable);
                 }
             }
@@ -672,8 +682,13 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
 
                     return new TwoElementMap<>(key1, value1, key2, value2);
                 } else {
+                    this.valid = false;
                     return new HashArrayBackedMap<>(
-                            tableSize, size, maxProbingDistance, keyTable, GenericArrays.mapInPlace(valueTable, valueMappingFunction));
+                            tableSize,
+                            size,
+                            maxProbingDistance,
+                            keyTable,
+                            GenericArrays.mapInPlace(valueTable, valueMappingFunction));
                 }
             }
 

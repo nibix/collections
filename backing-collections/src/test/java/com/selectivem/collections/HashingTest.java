@@ -104,8 +104,7 @@ public class HashingTest {
             for (int i = 0; i < sampleCount; i++) {
                 String[] table = new String[tableSize + maxProbingDistance];
                 int count = 0;
-                List<String> testValues =
-                        testDataFactory.getTestData(tableSize + maxProbingDistance + 1, random);
+                List<String> testValues = testDataFactory.getTestData(tableSize + maxProbingDistance + 1, random);
 
                 int probingOverhead = 0;
 
@@ -184,7 +183,8 @@ public class HashingTest {
         public static Collection<Object[]> params() {
             List<Object[]> result = new ArrayList<>();
 
-            for (int tableSize : Arrays.asList(0x10, 0x40, 0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000, 0x8000, 0x10000, 0x20000)) {
+            for (int tableSize : Arrays.asList(
+                    0x10, 0x40, 0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000, 0x8000, 0x10000, 0x20000)) {
                 for (TestDataFactory testDataFactory : TestDataFactory.ALL) {
                     result.add(new Object[] {tableSize, testDataFactory});
                 }

@@ -51,8 +51,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         } else {
             int hashTableSize = Hashing.hashTableSize(size);
             if (hashTableSize != -1 && set.size() < HashArrayBackedSet.MAX_CAPACITY) {
-                InternalBuilder<E> internalBuilder =
-                        new HashArrayBackedSet.Builder<>(hashTableSize, size);
+                InternalBuilder<E> internalBuilder = new HashArrayBackedSet.Builder<>(hashTableSize, size);
 
                 for (E e : set) {
                     internalBuilder = internalBuilder.with(e);
@@ -437,7 +436,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         private final E[] flat;
         private final short[] indices;
 
-        HashArrayBackedSet(int tableSize, int size,  short maxProbingDistance, E[] table, short[] indices, E[] flat) {
+        HashArrayBackedSet(int tableSize, int size, short maxProbingDistance, E[] table, short[] indices, E[] flat) {
             super(size);
             this.tableSize = tableSize;
             this.size = size;

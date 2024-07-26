@@ -17,6 +17,7 @@ package com.selectivem.collections;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -304,10 +305,15 @@ public class ImmutableMapImplTest {
 
         @Test
         public void of_self() {
-            ImmutableMapImpl<String, String> set1 = ImmutableMapImpl.of("a", "aa");
-            ImmutableMapImpl<String, String> set2 = ImmutableMapImpl.of(set1);
+            ImmutableMapImpl<String, String> map1 = ImmutableMapImpl.of("a", "aa");
+            ImmutableMapImpl<String, String> map2 = ImmutableMapImpl.of(map1);
+            Assert.assertTrue(map1 == map2);
+        }
 
-            Assert.assertEquals(set1, set2);
+        @Test
+        public void of_emptyMap() {
+            ImmutableMapImpl<String, String> subject = ImmutableMapImpl.of(new HashMap<>());
+            Assert.assertTrue(subject == ImmutableMapImpl.<String, String>empty());
         }
 
         @Test(expected = IllegalArgumentException.class)
@@ -322,7 +328,7 @@ public class ImmutableMapImplTest {
             ImmutableMapImpl.InternalBuilder<String, String> builder =
                     ImmutableMapImpl.InternalBuilder.<String, String>create(10).with("a", "aa");
 
-            Assert.assertEquals(ImmutableMapImpl.of("a", "aa"), builder.build());
+            Assert.assertEquals(mapOf("a", "aa"), builder.build());
         }
 
         @Test
@@ -332,7 +338,57 @@ public class ImmutableMapImplTest {
                             .with("a", "aa")
                             .with("b", "bb");
 
-            Assert.assertEquals(ImmutableMapImpl.of("a", "aa", "b", "bb"), builder.build());
+            Assert.assertEquals(mapOf("a", "aa", "b", "bb"), builder.build());
+        }
+
+        @Test
+        public void builder_overwrite() {
+            ImmutableMapImpl.InternalBuilder<String, String> builder =
+                    ImmutableMapImpl.InternalBuilder.<String, String>create(10)
+                            .with("a", "aa")
+                            .with("b", "bb");
+
+            Assert.assertEquals(2, builder.size());
+            builder = builder.with("b", "xx");
+            Assert.assertEquals(2, builder.size());
+
+            Assert.assertEquals(mapOf("a", "aa", "b", "xx"), builder.build());
+        }
+
+        @Test
+        public void builder_containsKey() {
+            ImmutableMapImpl.InternalBuilder<String, String> builder =
+                    ImmutableMapImpl.InternalBuilder.<String, String>create(10)
+                            .with("a", "aa")
+                            .with("b", "bb");
+
+            Assert.assertTrue(builder.containsKey("b"));
+        }
+
+        @Test
+        public void builder_build_valueMappingFunction() {
+            ImmutableMapImpl.InternalBuilder<String, Integer> builder =
+                    ImmutableMapImpl.InternalBuilder.<String, Integer>create(10);
+            ImmutableMapImpl<String, String> result = builder.build(i -> String.valueOf(i));
+            Assert.assertEquals(mapOf(), result);
+
+            builder =
+                    ImmutableMapImpl.InternalBuilder.<String, Integer>create(10).with("a", 1);
+            result = builder.build(i -> String.valueOf(i));
+            Assert.assertEquals(mapOf("a", "1"), result);
+
+            builder = ImmutableMapImpl.InternalBuilder.<String, Integer>create(10)
+                    .with("a", 1)
+                    .with("b", 2);
+            result = builder.build(i -> String.valueOf(i));
+            Assert.assertEquals(mapOf("a", "1", "b", "2"), result);
+
+            builder = ImmutableMapImpl.InternalBuilder.<String, Integer>create(10)
+                    .with("a", 1)
+                    .with("b", 2)
+                    .with("c", 3);
+            result = builder.build(i -> String.valueOf(i));
+            Assert.assertEquals(mapOf("a", "1", "b", "2", "c", "3"), result);
         }
 
         @Test
@@ -348,6 +404,198 @@ public class ImmutableMapImplTest {
             }
 
             Assert.assertEquals(reference, builder.build());
+        }
+    }
+
+    @RunWith(Parameterized.class)
+    public static class ParameterizedTest {
+        final ImmutableMapImpl<String, String> subject;
+        final Map<String, String> reference;
+
+        @Test
+        public void equals() {
+            Assert.assertEquals(reference, subject);
+            Assert.assertTrue(subject.equals(reference));
+        }
+
+        @Test
+        public void equals_negative() {
+            Map<String, String> referenceWithOneMore = new HashMap<>(reference);
+            referenceWithOneMore.put("xyz", "a");
+            Assert.assertFalse(subject.equals(referenceWithOneMore));
+            Assert.assertFalse(subject.equals(ImmutableMapImpl.of(referenceWithOneMore)));
+        }
+
+        @Test
+        public void isEmpty() {
+            Assert.assertEquals(reference.isEmpty(), subject.isEmpty());
+        }
+
+        @Test
+        public void containsKey_positive() {
+            Assert.assertEquals(reference.containsKey("a"), subject.containsKey("a"));
+        }
+
+        @Test
+        public void containsKey_negative() {
+            Assert.assertEquals(reference.containsKey("ä"), subject.containsKey("ä"));
+        }
+
+        @Test
+        public void containsValue_positive() {
+            Assert.assertEquals(reference.containsValue("a_val"), subject.containsValue("a_val"));
+        }
+
+        @Test
+        public void containsValue_negative() {
+            Assert.assertEquals(reference.containsValue("ä_val"), subject.containsValue("ä_val"));
+        }
+
+        @Test
+        public void get_positive() {
+            Assert.assertEquals(reference.get("a"), subject.get("a"));
+        }
+
+        @Test
+        public void get_negative() {
+            Assert.assertEquals(reference.get("ä"), subject.get("ä"));
+        }
+
+        @Test
+        public void keySet() {
+            Assert.assertEquals(reference.keySet(), subject.keySet());
+        }
+
+        @Test
+        public void keySet_contains() {
+            Assert.assertEquals(
+                    reference.keySet().contains("a"), subject.keySet().contains("a"));
+        }
+
+        @Test
+        public void keySet_size() {
+            Assert.assertEquals(reference.keySet().size(), subject.keySet().size());
+        }
+
+        @Test(expected = NoSuchElementException.class)
+        public void keySet_iterator_exhausted() {
+            Iterator<String> iter = subject.keySet().iterator();
+
+            while (iter.hasNext()) {
+                iter.next();
+            }
+
+            iter.next();
+        }
+
+        @Test
+        public void entrySet() {
+            Assert.assertEquals(reference.entrySet(), subject.entrySet());
+        }
+
+        @Test
+        public void entrySet_contains_positive() {
+            Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<>("a", "a_val");
+            Assert.assertEquals(
+                    reference.entrySet().contains(entry), subject.entrySet().contains(entry));
+        }
+
+        @Test
+        public void entrySet_contains_negative_wrongKey() {
+            Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<>("xyz", "x_val");
+            Assert.assertEquals(
+                    reference.entrySet().contains(entry), subject.entrySet().contains(entry));
+        }
+
+        @Test
+        public void entrySet_contains_negative_wrongValue() {
+            Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<>("a", "x_val");
+            Assert.assertEquals(
+                    reference.entrySet().contains(entry), subject.entrySet().contains(entry));
+        }
+
+        @Test
+        public void entrySet_size() {
+            Assert.assertEquals(reference.entrySet().size(), subject.entrySet().size());
+        }
+
+        @Test(expected = NoSuchElementException.class)
+        public void entrySet_iterator_exhausted() {
+            Iterator<Map.Entry<String, String>> iter = subject.entrySet().iterator();
+
+            while (iter.hasNext()) {
+                iter.next();
+            }
+
+            iter.next();
+        }
+
+        @Test
+        public void values() {
+            Assert.assertEquals(new TreeSet<>(reference.values()).size(), new TreeSet<>(subject.values()).size());
+            Assert.assertEquals(new TreeSet<>(reference.values()), new TreeSet<>(subject.values()));
+        }
+
+        @Test
+        public void forEach() {
+            Set<String> keySink = new HashSet<>();
+
+            subject.forEach((k, v) -> {
+                Assert.assertEquals(reference.get(k), v);
+                keySink.add(k);
+            });
+
+            Assert.assertEquals(reference.keySet(), keySink);
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void put() {
+            subject.put("x", "y");
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void addAll() {
+            subject.putAll(ImmutableMapImpl.of("a", "b"));
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void clear() {
+            subject.clear();
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void remove() {
+            subject.remove("x");
+        }
+
+        public ParameterizedTest(Map<String, String> reference, ImmutableMapImpl<String, String> subject) {
+            this.subject = subject;
+            this.reference = reference;
+        }
+
+        @Parameterized.Parameters(name = "{0}")
+        public static Collection<Object[]> params() {
+            ArrayList<Object[]> result = new ArrayList<>();
+
+            result.add(new Object[] {new HashMap<>(), ImmutableMapImpl.empty()});
+            result.add(new Object[] {
+                new HashMap<>(), ImmutableMapImpl.InternalBuilder.create(10).build()
+            });
+            result.add(new Object[] {mapOf("a", "a_val"), ImmutableMapImpl.of("a", "a_val")});
+            result.add(
+                    new Object[] {mapOf("a", "a_val", "b", "b_val"), ImmutableMapImpl.of("a", "a_val", "b", "b_val")});
+
+            Map<String, String> map1000 = stringMap(1000);
+            result.add(new Object[] {map1000, ImmutableMapImpl.of(map1000)});
+            Map<String, String> map2000 = stringMap(2000);
+            result.add(new Object[] {map2000, ImmutableMapImpl.of(map2000)});
+            Map<String, String> map3000 = stringMap(3000);
+            result.add(new Object[] {map3000, ImmutableMapImpl.of(map3000)});
+            Map<String, String> map4000 = stringMap(4000);
+            result.add(new Object[] {map4000, ImmutableMapImpl.of(map4000)});
+            Map<String, String> map5000 = stringMap(5000);
+            result.add(new Object[] {map5000, ImmutableMapImpl.of(map5000)});
+            return result;
         }
     }
 
@@ -483,6 +731,64 @@ public class ImmutableMapImplTest {
             }
 
             result.add(size);
+        }
+
+        return result;
+    }
+
+    static Map<String, String> mapOf(String... kv) {
+        HashMap<String, String> result = new HashMap<>();
+
+        for (int i = 0; i < kv.length; i += 2) {
+            result.put(kv[i], kv[i + 1]);
+        }
+
+        return result;
+    }
+
+    static Set<String> stringSet(int size) {
+        HashSet<String> result = new HashSet<>(size);
+
+        for (char c = 'a'; c <= 'z'; c++) {
+            result.add(String.valueOf(c));
+
+            if (result.size() >= size) {
+                return result;
+            }
+        }
+
+        for (char c1 = 'a'; c1 <= 'z'; c1++) {
+            for (char c2 = 'a'; c2 <= 'z'; c2++) {
+                result.add(String.valueOf(c1) + String.valueOf(c2));
+
+                if (result.size() >= size) {
+                    return result;
+                }
+            }
+        }
+
+        for (char c1 = 'a'; c1 <= 'z'; c1++) {
+            for (char c2 = 'a'; c2 <= 'z'; c2++) {
+                for (char c3 = 'a'; c3 <= 'z'; c3++) {
+
+                    result.add(String.valueOf(c1) + String.valueOf(c2) + String.valueOf(c3));
+
+                    if (result.size() >= size) {
+                        return result;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    static Map<String, String> stringMap(int size) {
+        Set<String> set = stringSet(size);
+        Map<String, String> result = new HashMap<>(size);
+
+        for (String e : set) {
+            result.put(e, e + "_val");
         }
 
         return result;
