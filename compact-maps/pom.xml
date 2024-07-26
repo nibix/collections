@@ -67,12 +67,5 @@
       <artifactId>interfaces</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.selectivem.collections</groupId>
-      <artifactId>backing-collections</artifactId>
-      <version>${project.version}</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 </project>
