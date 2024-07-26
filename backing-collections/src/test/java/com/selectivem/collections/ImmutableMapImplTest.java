@@ -413,6 +413,14 @@ public class ImmutableMapImplTest {
         }
 
         @Test
+        public void builder_setBacked_build_valueMappingFunction() {
+            ImmutableMapImpl.InternalBuilder<String, Integer> builder =
+                  new  ImmutableMapImpl.MapBackedMap.Builder<String, Integer>(10).with("a", 1);
+            ImmutableMapImpl<String, String> result = builder.build(i -> String.valueOf(i));
+            Assert.assertEquals(mapOf("a", "1"), result);
+        }
+
+        @Test
         public void builder_grow() {
             ImmutableMapImpl.InternalBuilder<String, String> builder =
                     ImmutableMapImpl.InternalBuilder.<String, String>create(10).probingOverheadFactor((short) 1);
@@ -425,6 +433,18 @@ public class ImmutableMapImplTest {
             }
 
             Assert.assertEquals(reference, builder.build());
+        }
+
+        @Test
+        public void getEstimatedByteSize() {
+            int prevEstimatedByteSize = ImmutableMapImpl.empty().getEstimatedByteSize();
+
+            for (int i = 1; i < 20; i++) {
+                int nextEstimatedByteSize = ImmutableMapImpl.of(stringMap(i)).getEstimatedByteSize();
+                Assert.assertTrue(nextEstimatedByteSize > 0);
+                Assert.assertTrue(prevEstimatedByteSize + " <= " + nextEstimatedByteSize, prevEstimatedByteSize <= nextEstimatedByteSize);
+                prevEstimatedByteSize = nextEstimatedByteSize;
+            }
         }
     }
 
@@ -440,11 +460,26 @@ public class ImmutableMapImplTest {
         }
 
         @Test
-        public void equals_negative() {
+        public void equals_negative_differentValue() {
+            if (!reference.isEmpty()) {
+                Map<String, String> referenceWithDifferentValue = new HashMap<>(reference);
+                referenceWithDifferentValue.put(reference.keySet().iterator().next(), "1234");
+                Assert.assertFalse(subject.equals(referenceWithDifferentValue));
+                Assert.assertFalse(subject.equals(ImmutableMapImpl.of(referenceWithDifferentValue)));
+            }
+        }
+
+        @Test
+        public void equals_negative_oneMore() {
             Map<String, String> referenceWithOneMore = new HashMap<>(reference);
             referenceWithOneMore.put("xyz", "a");
             Assert.assertFalse(subject.equals(referenceWithOneMore));
             Assert.assertFalse(subject.equals(ImmutableMapImpl.of(referenceWithOneMore)));
+        }
+
+        @Test
+        public void equals_negative_otherObject() {
+            Assert.assertFalse(subject.equals("foobar"));
         }
 
         @Test
@@ -455,6 +490,8 @@ public class ImmutableMapImplTest {
         @Test
         public void containsKey_positive() {
             Assert.assertEquals(reference.containsKey("a"), subject.containsKey("a"));
+            Assert.assertEquals(reference.containsKey("b"), subject.containsKey("b"));
+
         }
 
         @Test
@@ -465,6 +502,7 @@ public class ImmutableMapImplTest {
         @Test
         public void containsValue_positive() {
             Assert.assertEquals(reference.containsValue("a_val"), subject.containsValue("a_val"));
+            Assert.assertEquals(reference.containsValue("b_val"), subject.containsValue("b_val"));
         }
 
         @Test
@@ -491,6 +529,11 @@ public class ImmutableMapImplTest {
         public void keySet_contains() {
             Assert.assertEquals(
                     reference.keySet().contains("a"), subject.keySet().contains("a"));
+        }
+
+        @Test
+        public void keySet_empty() {
+            Assert.assertEquals(reference.keySet().isEmpty(), subject.keySet().isEmpty());
         }
 
         @Test
@@ -533,6 +576,11 @@ public class ImmutableMapImplTest {
             Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<>("a", "x_val");
             Assert.assertEquals(
                     reference.entrySet().contains(entry), subject.entrySet().contains(entry));
+        }
+
+        @Test
+        public void entrySet_empty() {
+            Assert.assertEquals(reference.entrySet().isEmpty(), subject.entrySet().isEmpty());
         }
 
         @Test
@@ -657,6 +705,8 @@ public class ImmutableMapImplTest {
             result.add(new Object[] {map4000, ImmutableMapImpl.of(map4000)});
             Map<String, String> map5000 = stringMap(5000);
             result.add(new Object[] {map5000, ImmutableMapImpl.of(map5000)});
+            Map<String, String> map190000 = stringMap(190000);
+            result.add(new Object[] {map190000, ImmutableMapImpl.of(map190000)});
             return result;
         }
     }

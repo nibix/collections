@@ -497,6 +497,18 @@ public class IndexedImmutableSetTest {
             Assert.assertEquals("b", element);
         }
 
+        @Test
+        public void builder() {
+            IndexedImmutableSetImpl.InternalBuilder<String> builder = IndexedImmutableSetImpl.builder(10);
+
+            for (String e : reference) {
+                builder = builder.with(e);
+            }
+
+            IndexedImmutableSetImpl<String> result = builder.build();
+            Assert.assertEquals(reference, result);
+        }
+
         @Test(expected = UnsupportedOperationException.class)
         public void add() {
             subject.add("x");
@@ -576,6 +588,7 @@ public class IndexedImmutableSetTest {
             result.add(new Object[] {set16000, IndexedImmutableSetImpl.of(set16000)});
             Set<String> set33000 = stringSet(33000);
             result.add(new Object[] {set33000, IndexedImmutableSetImpl.of(set33000)});
+
             return result;
         }
 
