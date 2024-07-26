@@ -42,6 +42,7 @@ class GenericArrays {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     static <E, T> T[] copyAsTypedArray(E[] source, T[] target) {
         T[] result = target.length >= source.length
                 ? target
@@ -51,6 +52,7 @@ class GenericArrays {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     static <E, T> T[] copyAsTypedArray(E[] source, T[] target, int size) {
         T[] result = target.length >= size
                 ? target

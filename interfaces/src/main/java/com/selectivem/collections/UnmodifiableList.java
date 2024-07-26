@@ -29,18 +29,21 @@ import java.util.function.UnaryOperator;
  * This can be the case for views on other collections.
  */
 public interface UnmodifiableList<E> extends UnmodifiableCollection<E>, List<E> {
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     default boolean add(E e) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default boolean remove(Object o) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default boolean addAll(Collection<? extends E> c) {
@@ -50,37 +53,42 @@ public interface UnmodifiableList<E> extends UnmodifiableCollection<E>, List<E> 
     @Override
     boolean addAll(int index, Collection<? extends E> c);
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default boolean removeAll(Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default boolean removeIf(Predicate<? super E> filter) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default boolean retainAll(Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default void replaceAll(UnaryOperator<E> operator) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default void sort(Comparator<? super E> c) {
-
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default void clear() {

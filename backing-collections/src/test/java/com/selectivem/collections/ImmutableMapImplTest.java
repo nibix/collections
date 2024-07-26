@@ -549,23 +549,64 @@ public class ImmutableMapImplTest {
         }
 
         @Test(expected = UnsupportedOperationException.class)
+        @SuppressWarnings("deprecation")
         public void put() {
             subject.put("x", "y");
         }
 
         @Test(expected = UnsupportedOperationException.class)
+        @SuppressWarnings("deprecation")
         public void addAll() {
             subject.putAll(ImmutableMapImpl.of("a", "b"));
         }
 
         @Test(expected = UnsupportedOperationException.class)
+        @SuppressWarnings("deprecation")
         public void clear() {
             subject.clear();
         }
 
         @Test(expected = UnsupportedOperationException.class)
+        @SuppressWarnings("deprecation")
         public void remove() {
             subject.remove("x");
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        @SuppressWarnings("deprecation")
+        public void remove_key_value() {
+            subject.remove("x", "y");
+        }
+
+
+        @Test(expected = UnsupportedOperationException.class)
+        @SuppressWarnings("deprecation")
+        public void replace() {
+            subject.replace("x", "z");
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        @SuppressWarnings("deprecation")
+        public void replace_key_value() {
+            subject.replace("x", "y", "z");
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        @SuppressWarnings("deprecation")
+        public void replaceAll() {
+            subject.replaceAll((k,v) -> v + "x");
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        @SuppressWarnings("deprecation")
+        public void computeIfAbsent() {
+            subject.computeIfAbsent("x", k -> "");
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        @SuppressWarnings("deprecation")
+        public void merge() {
+            subject.merge("x", "y", (v1, v2) -> v1 + v2);
         }
 
         public ParameterizedTest(Map<String, String> reference, ImmutableMapImpl<String, String> subject) {

@@ -28,42 +28,49 @@ import java.util.function.Predicate;
  * This can be the case for views on other collections.
  */
 public interface UnmodifiableSet<E> extends UnmodifiableCollection<E>, Set<E> {
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     default boolean add(E e) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default boolean remove(Object o) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default boolean addAll(Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default boolean removeAll(Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default boolean removeIf(Predicate<? super E> filter) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default boolean retainAll(Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     default void clear() {

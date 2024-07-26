@@ -22,54 +22,63 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 abstract class UnmodifiableMapImpl<K, V> extends AbstractMap<K, V> implements UnmodifiableMap<K, V> {
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public V put(K key, V value) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public V remove(Object key) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public void putAll(Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public void clear() {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public V putIfAbsent(K key, V value) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public boolean remove(Object key, Object value) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public boolean replace(K key, V oldValue, V newValue) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public V replace(K key, V value) {
@@ -82,6 +91,7 @@ abstract class UnmodifiableMapImpl<K, V> extends AbstractMap<K, V> implements Un
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated
     public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
