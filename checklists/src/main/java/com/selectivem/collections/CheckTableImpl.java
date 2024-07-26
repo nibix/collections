@@ -316,6 +316,10 @@ class CheckTableImpl {
 
         @Override
         public Set<R> getCheckedRows(C column) {
+            if (!column.equals(this.column)) {
+                throw new IllegalArgumentException("Invalid column: " + column);
+            }
+
             return getCompleteRows();
         }
 

@@ -483,6 +483,17 @@ public class ImmutableMapImplTest {
         }
 
         @Test
+        public void equals_negative_differentKey() {
+            if (!reference.isEmpty()) {
+                Map<String, String> referenceWithDifferentValue = new HashMap<>(reference);
+                referenceWithDifferentValue.remove(reference.keySet().iterator().next());
+                referenceWithDifferentValue.put("new_key", "1234");
+                Assert.assertFalse(subject.equals(referenceWithDifferentValue));
+                Assert.assertFalse(subject.equals(ImmutableMapImpl.of(referenceWithDifferentValue)));
+            }
+        }
+
+        @Test
         public void equals_negative_oneMore() {
             Map<String, String> referenceWithOneMore = new HashMap<>(reference);
             referenceWithOneMore.put("xyz", "a");
@@ -588,6 +599,12 @@ public class ImmutableMapImplTest {
             Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<>("a", "x_val");
             Assert.assertEquals(
                     reference.entrySet().contains(entry), subject.entrySet().contains(entry));
+        }
+
+        @Test
+        public void entrySet_contains_negative_wrongType() {
+            Assert.assertEquals(
+                    reference.entrySet().contains("foobar"), subject.entrySet().contains("foobar"));
         }
 
         @Test

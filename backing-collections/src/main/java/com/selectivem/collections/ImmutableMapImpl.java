@@ -569,6 +569,16 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
                 }
             }
 
+            InternalBuilder<K, V> with(Map<K, V> map) {
+                InternalBuilder<K, V> builder = this;
+
+                for (Map.Entry<K, V> entry : map.entrySet()) {
+                    builder = builder.with(entry.getKey(), entry.getValue());
+                }
+
+                return builder;
+            }
+
             @Override
             int size() {
                 return size;
@@ -790,18 +800,8 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
                 this.delegate = new HashMap<>(expectedCapacity);
             }
 
-            Builder(Map<K, V> map) {
-                this.delegate = new HashMap<>(map);
-            }
-
-            public Builder<K, V> with(K key, V value) {
+            Builder<K, V> with(K key, V value) {
                 this.delegate.put(key, value);
-                return this;
-            }
-
-            @Override
-            InternalBuilder<K, V> with(Map<K, V> map) {
-                this.delegate.putAll(map);
                 return this;
             }
 
@@ -901,16 +901,6 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
 
     abstract static class InternalBuilder<K, V> {
         abstract InternalBuilder<K, V> with(K key, V value);
-
-        InternalBuilder<K, V> with(Map<K, V> map) {
-            InternalBuilder<K, V> builder = this;
-
-            for (Map.Entry<K, V> entry : map.entrySet()) {
-                builder = builder.with(entry.getKey(), entry.getValue());
-            }
-
-            return builder;
-        }
 
         InternalBuilder<K, V> withNonNull(K[] keyTable, V[] valueTable) {
             InternalBuilder<K, V> builder = this;

@@ -28,7 +28,7 @@ public class IndexRefMapImplTest {
         IndexRefMapImpl<String, String> subject =
                 new IndexRefMapImpl<>(new String[] {"1", "2"}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
         Assert.assertEquals("[a=1, b=2]", subject.toString());
-        subject = new IndexRefMapImpl<>(new String[] {"1"}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
+        subject = new IndexRefMapImpl<>(new String[] {"1", null}, 1, IndexedImmutableSetImpl.of("a", "b"), 0);
         Assert.assertEquals("[a=1]", subject.toString());
     }
 
@@ -41,10 +41,33 @@ public class IndexRefMapImplTest {
     }
 
     @Test
+    public void containsValue2() {
+        IndexRefMapImpl<String, String> subject =
+                new IndexRefMapImpl<>(new String[] {"1", null}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
+        Assert.assertTrue(subject.containsValue("1"));
+        Assert.assertFalse(subject.containsValue("2"));
+    }
+
+
+    @Test
     public void get_keySuperSetMiss() {
         IndexRefMapImpl<String, String> subject =
                 new IndexRefMapImpl<>(new String[] {"1", "2"}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
         Assert.assertNull(subject.get("x"));
+    }
+
+    @Test
+    public void isEmpty() {
+        IndexRefMapImpl<String, String> subject =
+                new IndexRefMapImpl<>(new String[] {"1", "2"}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
+        Assert.assertFalse(subject.isEmpty());
+    }
+
+    @Test
+    public void entrySet_contains_wrongType() {
+        IndexRefMapImpl<String, String> subject =
+                new IndexRefMapImpl<>(new String[] {"1", "2"}, 2, IndexedImmutableSetImpl.of("a", "b"), 0);
+        Assert.assertFalse(subject.entrySet().contains("foobar"));
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -73,3 +96,4 @@ public class IndexRefMapImplTest {
         iter.next();
     }
 }
+

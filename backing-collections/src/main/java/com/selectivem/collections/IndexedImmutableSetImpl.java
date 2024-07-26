@@ -29,7 +29,11 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
     }
 
     static <E> IndexedImmutableSetImpl<E> of(E e1, E e2) {
-        return new TwoElementSet<>(e1, e2);
+        if (!e1.equals(e2)) {
+            return new TwoElementSet<>(e1, e2);
+        } else {
+            return new OneElementSet<>(e1);
+        }
     }
 
     static <E> IndexedImmutableSetImpl<E> of(Set<E> set) {

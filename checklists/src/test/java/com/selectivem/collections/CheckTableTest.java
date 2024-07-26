@@ -248,6 +248,14 @@ public class CheckTableTest {
     }
 
     @Test
+    public void uncheckIf_iterable_column_blank() {
+        subject.uncheckIf(subject.getRows(), (i) -> {
+            Assert.fail();
+            return false;
+        });
+    }
+
+    @Test
     public void uncheckIf_iterable_row() {
         subject.checkIf(rows, (i) -> true);
         subject.uncheckIf((i) -> i == 1, someColumns);
@@ -269,6 +277,22 @@ public class CheckTableTest {
                 Assert.assertEquals(!(column.equals("a") && someRows.contains(row)), subject.isChecked(row, column));
             }
         }
+    }
+
+    @Test
+    public void uncheckIf_row_blank() {
+        subject.uncheckIf((i) -> {
+            Assert.fail();
+            return false;
+        }, "a");
+    }
+
+    @Test
+    public void uncheckIf_iterable_row_blank() {
+        subject.uncheckIf((i) -> {
+            Assert.fail();
+            return false;
+        }, subject.getColumns());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -531,6 +555,16 @@ public class CheckTableTest {
     }
 
     @Test
+    public void getCompleteRows_empty() {
+        Assert.assertEquals(Collections.emptySet(), subject.getCompletRows());
+    }
+
+    @Test
+    public void getCompleteColumns_empty() {
+        Assert.assertEquals(Collections.emptySet(), subject.getCompleteColumns());
+    }
+
+    @Test
     public void getCheckedColumns() {
         subject.checkIf(rows, (c) -> someColumns.contains(c));
         Assert.assertEquals(
@@ -541,6 +575,12 @@ public class CheckTableTest {
     public void getCheckedColumns_illegalArgument() {
         subject.checkIf(rows, (c) -> someColumns.contains(c));
         subject.getCheckedColumns(1234);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getCheckedRows_illegalArgument() {
+        subject.checkIf(rows, (c) -> someColumns.contains(c));
+        subject.getCheckedRows("foo");
     }
 
     @Test

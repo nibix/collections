@@ -349,6 +349,13 @@ public class IndexedImmutableSetTest {
             Assert.assertEquals(set1, set2);
         }
 
+        @Test
+        public void of_same() {
+            IndexedImmutableSetImpl<String> set1 = IndexedImmutableSetImpl.of("a", "a");
+            Assert.assertEquals(1, set1.size());
+            Assert.assertEquals(IndexedImmutableSetImpl.of("a"), set1);
+        }
+
         @Test(expected = IllegalArgumentException.class)
         public void builder_addNull() {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
