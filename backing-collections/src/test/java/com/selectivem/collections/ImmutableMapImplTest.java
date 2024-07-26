@@ -285,6 +285,14 @@ public class ImmutableMapImplTest {
         }
 
         @Test
+        public void builder_keySet_contains() {
+            ImmutableMapImpl.InternalBuilder<String, String> builder = ImmutableMapImpl.InternalBuilder.<String, String>create(10).with("a", "aa");
+            Assert.assertTrue(builder.keySet().contains("a"));
+            Assert.assertFalse(builder.keySet().contains("b"));
+        }
+
+
+        @Test
         public void builder_keySet_iterator_empty() {
             ImmutableMapImpl.InternalBuilder<String, String> builder = ImmutableMapImpl.InternalBuilder.create(10);
             Assert.assertFalse(builder.keySet().iterator().hasNext());
@@ -363,6 +371,19 @@ public class ImmutableMapImplTest {
                             .with("b", "bb");
 
             Assert.assertTrue(builder.containsKey("b"));
+            Assert.assertFalse(builder.containsKey("x"));
+        }
+
+        @Test(expected = IllegalStateException.class)
+        public void builder_invalid() {
+            ImmutableMapImpl.InternalBuilder<String, String> builder =
+                    ImmutableMapImpl.InternalBuilder.<String, String>create(10)
+                            .with("a", "aa")
+                            .with("b", "bb")
+                            .with("c", "cc");
+
+            ImmutableMapImpl<String, String> result = builder.build();
+            builder.with("d", "dd");
         }
 
         @Test

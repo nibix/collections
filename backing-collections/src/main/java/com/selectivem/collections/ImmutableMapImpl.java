@@ -491,6 +491,10 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
             }
 
             private InternalBuilder<K, V> with(K key, V value, int pos) {
+                if (!valid) {
+                    throw new IllegalStateException("Builder instance is not active any more");
+                }
+
                 if (keyTable == null) {
                     keyTable = GenericArrays.create(tableSize + maxProbingDistance);
                     valueTable = GenericArrays.create(tableSize + maxProbingDistance);

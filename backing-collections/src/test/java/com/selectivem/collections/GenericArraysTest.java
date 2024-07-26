@@ -20,10 +20,32 @@ import org.junit.Test;
 
 public class GenericArraysTest {
     @Test
+    public void indexOfNextNonNull() {
+        Assert.assertEquals(0, GenericArrays.indexOfNextNonNull(new Object[] {1, 2, 3}, 0));
+        Assert.assertEquals(1, GenericArrays.indexOfNextNonNull(new Object[] {null, 1, 2}, 0));
+        Assert.assertEquals(-1, GenericArrays.indexOfNextNonNull(new Object[] {null, null, null}, 0));
+    }
+
+
+    @Test
     public void mapInPlace() {
         Object[] source = new Object[] {1, 2, 3};
         Object[] mapped = GenericArrays.mapInPlace(source, o -> String.valueOf(o));
         Assert.assertTrue(source == mapped);
         Assert.assertArrayEquals(new Object[] {"1", "2", "3"}, mapped);
+    }
+
+    @Test
+    public void mapInPlace_identity() {
+        Object[] source = new Object[] {1, 2, 3};
+        Object[] mapped = GenericArrays.mapInPlace(source, null);
+        Assert.assertTrue(source == mapped);
+        Assert.assertArrayEquals(new Object[] {1, 2, 3}, mapped);
+    }
+
+    @Test
+    public void mapInPlace_null() {
+        Object[] mapped = GenericArrays.mapInPlace(null, null);
+        Assert.assertTrue(mapped == null);
     }
 }
