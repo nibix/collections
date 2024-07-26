@@ -15,6 +15,7 @@
  */
 package com.selectivem.collections;
 
+import static com.selectivem.collections.TestUtils.*;
 import static org.junit.Assert.assertTrue;
 
 import java.util.AbstractMap;
@@ -286,11 +287,21 @@ public class ImmutableMapImplTest {
 
         @Test
         public void builder_keySet_contains() {
-            ImmutableMapImpl.InternalBuilder<String, String> builder = ImmutableMapImpl.InternalBuilder.<String, String>create(10).with("a", "aa");
+            ImmutableMapImpl.InternalBuilder<String, String> builder =
+                    ImmutableMapImpl.InternalBuilder.<String, String>create(10).with("a", "aa");
             Assert.assertTrue(builder.keySet().contains("a"));
             Assert.assertFalse(builder.keySet().contains("b"));
         }
 
+        @Test
+        public void builder_keySet_size() {
+            ImmutableMapImpl.InternalBuilder<String, String> builder = ImmutableMapImpl.InternalBuilder.create(10);
+            Assert.assertEquals(0, builder.keySet().size());
+            builder = builder.with("a", "aa").with("b", "bb").with("c", "cc");
+            Assert.assertEquals(3, builder.keySet().size());
+            builder = builder.with("d", "dd");
+            Assert.assertEquals(4, builder.keySet().size());
+        }
 
         @Test
         public void builder_keySet_iterator_empty() {
@@ -415,7 +426,7 @@ public class ImmutableMapImplTest {
         @Test
         public void builder_setBacked_build_valueMappingFunction() {
             ImmutableMapImpl.InternalBuilder<String, Integer> builder =
-                  new  ImmutableMapImpl.MapBackedMap.Builder<String, Integer>(10).with("a", 1);
+                    new ImmutableMapImpl.MapBackedMap.Builder<String, Integer>(10).with("a", 1);
             ImmutableMapImpl<String, String> result = builder.build(i -> String.valueOf(i));
             Assert.assertEquals(mapOf("a", "1"), result);
         }
@@ -442,7 +453,9 @@ public class ImmutableMapImplTest {
             for (int i = 1; i < 20; i++) {
                 int nextEstimatedByteSize = ImmutableMapImpl.of(stringMap(i)).getEstimatedByteSize();
                 Assert.assertTrue(nextEstimatedByteSize > 0);
-                Assert.assertTrue(prevEstimatedByteSize + " <= " + nextEstimatedByteSize, prevEstimatedByteSize <= nextEstimatedByteSize);
+                Assert.assertTrue(
+                        prevEstimatedByteSize + " <= " + nextEstimatedByteSize,
+                        prevEstimatedByteSize <= nextEstimatedByteSize);
                 prevEstimatedByteSize = nextEstimatedByteSize;
             }
         }
@@ -491,7 +504,6 @@ public class ImmutableMapImplTest {
         public void containsKey_positive() {
             Assert.assertEquals(reference.containsKey("a"), subject.containsKey("a"));
             Assert.assertEquals(reference.containsKey("b"), subject.containsKey("b"));
-
         }
 
         @Test
@@ -580,7 +592,8 @@ public class ImmutableMapImplTest {
 
         @Test
         public void entrySet_empty() {
-            Assert.assertEquals(reference.entrySet().isEmpty(), subject.entrySet().isEmpty());
+            Assert.assertEquals(
+                    reference.entrySet().isEmpty(), subject.entrySet().isEmpty());
         }
 
         @Test
@@ -647,7 +660,6 @@ public class ImmutableMapImplTest {
             subject.remove("x", "y");
         }
 
-
         @Test(expected = UnsupportedOperationException.class)
         @SuppressWarnings("deprecation")
         public void replace() {
@@ -663,7 +675,7 @@ public class ImmutableMapImplTest {
         @Test(expected = UnsupportedOperationException.class)
         @SuppressWarnings("deprecation")
         public void replaceAll() {
-            subject.replaceAll((k,v) -> v + "x");
+            subject.replaceAll((k, v) -> v + "x");
         }
 
         @Test(expected = UnsupportedOperationException.class)
@@ -843,64 +855,6 @@ public class ImmutableMapImplTest {
             }
 
             result.add(size);
-        }
-
-        return result;
-    }
-
-    static Map<String, String> mapOf(String... kv) {
-        HashMap<String, String> result = new HashMap<>();
-
-        for (int i = 0; i < kv.length; i += 2) {
-            result.put(kv[i], kv[i + 1]);
-        }
-
-        return result;
-    }
-
-    static Set<String> stringSet(int size) {
-        HashSet<String> result = new HashSet<>(size);
-
-        for (char c = 'a'; c <= 'z'; c++) {
-            result.add(String.valueOf(c));
-
-            if (result.size() >= size) {
-                return result;
-            }
-        }
-
-        for (char c1 = 'a'; c1 <= 'z'; c1++) {
-            for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                result.add(String.valueOf(c1) + String.valueOf(c2));
-
-                if (result.size() >= size) {
-                    return result;
-                }
-            }
-        }
-
-        for (char c1 = 'a'; c1 <= 'z'; c1++) {
-            for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                for (char c3 = 'a'; c3 <= 'z'; c3++) {
-
-                    result.add(String.valueOf(c1) + String.valueOf(c2) + String.valueOf(c3));
-
-                    if (result.size() >= size) {
-                        return result;
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    static Map<String, String> stringMap(int size) {
-        Set<String> set = stringSet(size);
-        Map<String, String> result = new HashMap<>(size);
-
-        for (String e : set) {
-            result.put(e, e + "_val");
         }
 
         return result;

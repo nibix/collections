@@ -15,6 +15,7 @@
  */
 package com.selectivem.collections;
 
+import static com.selectivem.collections.TestUtils.*;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -375,9 +376,9 @@ public class IndexedImmutableSetTest {
         public void builder_grow() {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
                     IndexedImmutableSetImpl.<String>builder(10).probingOverheadFactor((short) 1);
-            Set<String> reference = new HashSet<>(4100);
+            Set<String> reference = new HashSet<>(33000);
 
-            for (int i = 0; i < 4100; i++) {
+            for (int i = 0; i < 33000; i++) {
                 String e = "a" + i;
                 builder = builder.with(e);
                 reference.add(e);
@@ -389,21 +390,21 @@ public class IndexedImmutableSetTest {
         @Test
         public void builder_toString_setBacked() {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
-                    IndexedImmutableSetImpl.<String>builder(5000).with("a");
+                    IndexedImmutableSetImpl.<String>builder(33000).with("a");
             Assert.assertEquals("[a]", builder.toString());
         }
 
         @Test
         public void builder_contains_setBacked() {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
-                    IndexedImmutableSetImpl.<String>builder(5000).with("a");
+                    IndexedImmutableSetImpl.<String>builder(33000).with("a");
             Assert.assertTrue(builder.contains("a"));
             Assert.assertFalse(builder.contains("b"));
         }
 
         @Test
         public void builder_empty_setBacked() {
-            IndexedImmutableSetImpl.InternalBuilder<String> builder = IndexedImmutableSetImpl.<String>builder(5000);
+            IndexedImmutableSetImpl.InternalBuilder<String> builder = IndexedImmutableSetImpl.<String>builder(33000);
             Assert.assertEquals(0, builder.size());
             Assert.assertEquals(IndexedImmutableSetImpl.empty(), builder.build());
         }
@@ -503,6 +504,7 @@ public class IndexedImmutableSetTest {
 
             for (String e : reference) {
                 builder = builder.with(e);
+                Assert.assertTrue(builder.contains(e));
             }
 
             IndexedImmutableSetImpl<String> result = builder.build();
@@ -588,52 +590,6 @@ public class IndexedImmutableSetTest {
             result.add(new Object[] {set16000, IndexedImmutableSetImpl.of(set16000)});
             Set<String> set33000 = stringSet(33000);
             result.add(new Object[] {set33000, IndexedImmutableSetImpl.of(set33000)});
-
-            return result;
-        }
-
-        static Set<String> stringSet(int size) {
-            HashSet<String> result = new HashSet<>(size);
-
-            for (char c = 'a'; c <= 'z'; c++) {
-                result.add(String.valueOf(c));
-                if (result.size() >= size) {
-                    return result;
-                }
-            }
-
-            for (char c1 = 'a'; c1 <= 'z'; c1++) {
-                for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                    result.add(String.valueOf(c1) + String.valueOf(c2));
-                    if (result.size() >= size) {
-                        return result;
-                    }
-                }
-            }
-
-            for (char c1 = 'a'; c1 <= 'z'; c1++) {
-                for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                    for (char c3 = 'a'; c3 <= 'z'; c3++) {
-                        result.add(String.valueOf(c1) + String.valueOf(c2) + String.valueOf(c3));
-                        if (result.size() >= size) {
-                            return result;
-                        }
-                    }
-                }
-            }
-
-            for (char c1 = 'a'; c1 <= 'z'; c1++) {
-                for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                    for (char c3 = 'a'; c3 <= 'z'; c3++) {
-                        for (char c4 = 'a'; c4 <= 'z'; c4++) {
-                            result.add(String.valueOf(c1) + String.valueOf(c2) + String.valueOf(c3) + String.valueOf(c4));
-                            if (result.size() >= size) {
-                                return result;
-                            }
-                        }
-                    }
-                }
-            }
 
             return result;
         }

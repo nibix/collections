@@ -613,11 +613,6 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
                     }
 
                     @Override
-                    public boolean isEmpty() {
-                        return false;
-                    }
-
-                    @Override
                     public boolean contains(Object o) {
                         return HashArrayBackedMap.Builder.this.containsKey(o);
                     }

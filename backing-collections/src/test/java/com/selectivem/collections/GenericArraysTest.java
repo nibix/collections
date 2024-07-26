@@ -26,7 +26,6 @@ public class GenericArraysTest {
         Assert.assertEquals(-1, GenericArrays.indexOfNextNonNull(new Object[] {null, null, null}, 0));
     }
 
-
     @Test
     public void mapInPlace() {
         Object[] source = new Object[] {1, 2, 3};

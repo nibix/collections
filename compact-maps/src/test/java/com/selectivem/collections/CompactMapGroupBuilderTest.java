@@ -15,6 +15,8 @@
  */
 package com.selectivem.collections;
 
+import static com.selectivem.collections.TestUtils.*;
+
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -339,73 +341,5 @@ public class CompactMapGroupBuilderTest {
 
             return result;
         }
-    }
-
-    static Set<String> setOf(String... elements) {
-        return new HashSet<>(Arrays.asList(elements));
-    }
-
-    static Map<String, String> mapOf(String... kv) {
-        HashMap<String, String> result = new HashMap<>();
-
-        for (int i = 0; i < kv.length; i += 2) {
-            result.put(kv[i], kv[i + 1]);
-        }
-
-        return result;
-    }
-
-    static Set<String> intersection(Set<String> set1, Set<String> set2) {
-        HashSet<String> result = new HashSet<>(set1);
-        result.retainAll(set2);
-        return result;
-    }
-
-    static Set<String> stringSet(int size) {
-        HashSet<String> result = new HashSet<>(size);
-
-        for (char c = 'a'; c <= 'z'; c++) {
-            result.add(String.valueOf(c));
-
-            if (result.size() >= size) {
-                return result;
-            }
-        }
-
-        for (char c1 = 'a'; c1 <= 'z'; c1++) {
-            for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                result.add(String.valueOf(c1) + String.valueOf(c2));
-
-                if (result.size() >= size) {
-                    return result;
-                }
-            }
-        }
-
-        for (char c1 = 'a'; c1 <= 'z'; c1++) {
-            for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                for (char c3 = 'a'; c3 <= 'z'; c3++) {
-
-                    result.add(String.valueOf(c1) + String.valueOf(c2) + String.valueOf(c3));
-
-                    if (result.size() >= size) {
-                        return result;
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    static Map<String, String> stringMap(int size) {
-        Set<String> set = stringSet(size);
-        Map<String, String> result = new HashMap<>(size);
-
-        for (String e : set) {
-            result.put(e, e + "_val");
-        }
-
-        return result;
     }
 }
