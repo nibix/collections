@@ -48,7 +48,6 @@ public class IndexRefMapImplTest {
         Assert.assertFalse(subject.containsValue("2"));
     }
 
-
     @Test
     public void get_keySuperSetMiss() {
         IndexRefMapImpl<String, String> subject =
@@ -96,4 +95,3 @@ public class IndexRefMapImplTest {
         iter.next();
     }
 }
-

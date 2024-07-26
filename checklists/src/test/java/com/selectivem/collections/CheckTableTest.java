@@ -281,18 +281,22 @@ public class CheckTableTest {
 
     @Test
     public void uncheckIf_row_blank() {
-        subject.uncheckIf((i) -> {
-            Assert.fail();
-            return false;
-        }, "a");
+        subject.uncheckIf(
+                (i) -> {
+                    Assert.fail();
+                    return false;
+                },
+                "a");
     }
 
     @Test
     public void uncheckIf_iterable_row_blank() {
-        subject.uncheckIf((i) -> {
-            Assert.fail();
-            return false;
-        }, subject.getColumns());
+        subject.uncheckIf(
+                (i) -> {
+                    Assert.fail();
+                    return false;
+                },
+                subject.getColumns());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -556,7 +560,7 @@ public class CheckTableTest {
 
     @Test
     public void getCompleteRows_empty() {
-        Assert.assertEquals(Collections.emptySet(), subject.getCompletRows());
+        Assert.assertEquals(Collections.emptySet(), subject.getCompleteRows());
     }
 
     @Test
