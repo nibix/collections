@@ -30,6 +30,7 @@
     <module>interfaces</module>
     <module>checklists</module>
     <module>compact-subsets</module>
+    <module>compact-maps</module>
     <module>backing-collections</module>
   </modules>
 

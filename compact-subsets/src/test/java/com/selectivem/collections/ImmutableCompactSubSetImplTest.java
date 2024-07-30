@@ -115,6 +115,7 @@ public class ImmutableCompactSubSetImplTest {
                 return testArray;
             }
 
+            @SuppressWarnings("unchecked")
             @Override
             public <T> T[] toArray(T[] a) {
                 return (T[]) testArray;

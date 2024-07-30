@@ -13,103 +13,88 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.selectivem.collections;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-/**
- * Represents a list that does not allow modification via its public methods.
- *
- * Possibly, such a list is also immutable, i.e., guaranteed to never change.
- * However, it is also possible that an UnmodifiableSet changes "behind" the scenes.
- * This can be the case for views on other collections.
- */
-public interface UnmodifiableList<E> extends UnmodifiableCollection<E>, List<E> {
+abstract class UnmodifiableMapImpl<K, V> extends AbstractMap<K, V> implements UnmodifiableMap<K, V> {
     @SuppressWarnings("deprecation")
     @Override
     @Deprecated
-    default boolean add(E e) {
+    public V put(K key, V value) {
         throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("deprecation")
-    @Deprecated
     @Override
-    default boolean remove(Object o) {
+    @Deprecated
+    public V remove(Object key) {
         throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("deprecation")
+    @Override
     @Deprecated
-    @Override
-    default boolean addAll(Collection<? extends E> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    boolean addAll(int index, Collection<? extends E> c);
-
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    @Override
-    default boolean removeAll(Collection<?> c) {
+    public void putAll(Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("deprecation")
-    @Deprecated
     @Override
-    default boolean removeIf(Predicate<? super E> filter) {
+    @Deprecated
+    public void clear() {
         throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("deprecation")
-    @Deprecated
     @Override
-    default boolean retainAll(Collection<?> c) {
+    @Deprecated
+    public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
         throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("deprecation")
-    @Deprecated
     @Override
-    default void replaceAll(UnaryOperator<E> operator) {
+    @Deprecated
+    public V putIfAbsent(K key, V value) {
         throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("deprecation")
-    @Deprecated
     @Override
-    default void sort(Comparator<? super E> c) {
+    @Deprecated
+    public boolean remove(Object key, Object value) {
         throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("deprecation")
-    @Deprecated
     @Override
-    default void clear() {
+    @Deprecated
+    public boolean replace(K key, V oldValue, V newValue) {
         throw new UnsupportedOperationException();
     }
 
-    @Deprecated
+    @SuppressWarnings("deprecation")
     @Override
-    default E set(int index, E element) {
+    @Deprecated
+    public V replace(K key, V value) {
         throw new UnsupportedOperationException();
     }
 
-    @Deprecated
     @Override
-    default void add(int index, E element) {
+    @Deprecated
+    public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
         throw new UnsupportedOperationException();
     }
 
-    @Deprecated
+    @SuppressWarnings("deprecation")
     @Override
-    default E remove(int index) {
+    @Deprecated
+    public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
         throw new UnsupportedOperationException();
     }
 }

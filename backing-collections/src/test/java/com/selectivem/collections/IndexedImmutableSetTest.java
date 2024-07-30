@@ -15,6 +15,7 @@
  */
 package com.selectivem.collections;
 
+import static com.selectivem.collections.TestUtils.*;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ import org.junit.runners.Parameterized;
 
 @RunWith(Enclosed.class)
 public class IndexedImmutableSetTest {
+    static final TestValues testValues = new TestValues();
+
     @RunWith(Parameterized.class)
     public static class RandomizedTestBig {
         @Parameterized.Parameter
@@ -63,7 +66,7 @@ public class IndexedImmutableSetTest {
             int size = random.nextInt(100) + 4;
 
             for (int k = 0; k < size; k++) {
-                String string = randomString(random);
+                String string = testValues.randomString(random);
 
                 reference.add(string);
                 subject = subject.with(string);
@@ -74,7 +77,7 @@ public class IndexedImmutableSetTest {
             int insertionCount = random.nextInt(30) + 1;
 
             for (int k = 0; k < insertionCount; k++) {
-                String string = randomString(random);
+                String string = testValues.randomString(random);
 
                 reference.add(string);
                 subject = subject.with(string);
@@ -84,7 +87,7 @@ public class IndexedImmutableSetTest {
             insertionCount = random.nextInt(30) + 1;
 
             for (int k = 0; k < insertionCount; k++) {
-                String string = randomString(random);
+                String string = testValues.randomString(random);
 
                 reference.add(string);
                 subject = subject.with(string);
@@ -108,7 +111,7 @@ public class IndexedImmutableSetTest {
             }
 
             for (int k = 0; k < size; k++) {
-                String string = randomString(random);
+                String string = testValues.randomString(random);
 
                 if (!reference.contains(string)) {
                     reference.add(string);
@@ -131,7 +134,7 @@ public class IndexedImmutableSetTest {
                         reference.contains(string2),
                         subject.contains(string2));
 
-                String string3 = randomString(random);
+                String string3 = testValues.randomString(random);
                 Assert.assertEquals(
                         "String " + string3 + " found in " + subject,
                         reference.contains(string3),
@@ -151,7 +154,7 @@ public class IndexedImmutableSetTest {
             }
 
             for (int k = 0; k < size; k++) {
-                String string = randomString(random);
+                String string = testValues.randomString(random);
                 reference.add(string);
             }
 
@@ -181,7 +184,7 @@ public class IndexedImmutableSetTest {
             }
 
             for (int k = 0; k < size; k++) {
-                String string = randomString(random);
+                String string = testValues.randomString(random);
 
                 if (!reference.containsKey(string)) {
                     reference.put(string, reference.size());
@@ -207,92 +210,6 @@ public class IndexedImmutableSetTest {
                 if (!reference.containsKey(string2)) {
                     Assert.assertEquals(-1, subject.elementToIndex(string2));
                 }
-            }
-        }
-
-        private static <E> void assertEquals(HashSet<E> expected, IndexedImmutableSetImpl.InternalBuilder<E> actual) {
-            for (E e : expected) {
-                if (!actual.contains(e)) {
-                    Assert.fail("Not found in actual: "
-                            + e
-                            + ";\nexpected ("
-                            + expected.size()
-                            + "): "
-                            + expected
-                            + "\nactual ("
-                            + actual.size()
-                            + "): "
-                            + actual);
-                }
-            }
-
-            for (E e : actual) {
-                if (!expected.contains(e)) {
-                    Assert.fail("Not found in expected: "
-                            + e
-                            + ";\nexpected ("
-                            + expected.size()
-                            + "): "
-                            + expected
-                            + "\nactual ("
-                            + actual.size()
-                            + "): "
-                            + actual);
-                }
-            }
-
-            if (expected.size() != actual.size()) {
-                Assert.fail("Size does not match: "
-                        + expected.size()
-                        + " vs "
-                        + actual.size()
-                        + ";\nexpected: "
-                        + expected
-                        + "\nactual: "
-                        + actual);
-            }
-        }
-
-        private static <E> void assertEquals(Set<E> expected, IndexedImmutableSetImpl<E> actual) {
-            for (E e : expected) {
-                if (!actual.contains(e)) {
-                    Assert.fail("Not found in actual: "
-                            + e
-                            + ";\nexpected ("
-                            + expected.size()
-                            + "): "
-                            + expected
-                            + "\nactual ("
-                            + actual.size()
-                            + "): "
-                            + actual);
-                }
-            }
-
-            for (E e : actual) {
-                if (!expected.contains(e)) {
-                    Assert.fail("Not found in expected: "
-                            + e
-                            + ";\nexpected ("
-                            + expected.size()
-                            + "): "
-                            + expected
-                            + "\nactual ("
-                            + actual.size()
-                            + "): "
-                            + actual);
-                }
-            }
-
-            if (expected.size() != actual.size()) {
-                Assert.fail("Size does not match: "
-                        + expected.size()
-                        + " vs "
-                        + actual.size()
-                        + ";\nexpected: "
-                        + expected
-                        + "\nactual: "
-                        + actual);
             }
         }
     }
@@ -322,7 +239,7 @@ public class IndexedImmutableSetTest {
             List<String> initialContent = new ArrayList<>();
 
             for (int i = 0; i < initialCount; i++) {
-                initialContent.add(randomString(random));
+                initialContent.add(testValues.randomString(random));
             }
 
             HashSet<String> reference = new HashSet<>(initialContent);
@@ -353,7 +270,7 @@ public class IndexedImmutableSetTest {
             List<String> initialContent = new ArrayList<>();
 
             for (int i = 0; i < initialCount; i++) {
-                initialContent.add(randomString(random));
+                initialContent.add(testValues.randomString(random));
             }
 
             HashSet<String> reference = new HashSet<>(initialContent);
@@ -372,51 +289,6 @@ public class IndexedImmutableSetTest {
                 return random.nextInt(40);
             } else {
                 return random.nextInt(300);
-            }
-        }
-
-        private static <E> void assertEquals(Set<E> expected, IndexedImmutableSetImpl<E> actual) {
-
-            for (E e : expected) {
-
-                if (!actual.contains(e)) {
-                    Assert.fail("Not found in actual: "
-                            + e
-                            + ";\nexpected ("
-                            + expected.size()
-                            + "): "
-                            + expected
-                            + "\nactual ("
-                            + actual.size()
-                            + "): "
-                            + actual);
-                }
-            }
-
-            for (E e : actual) {
-                if (!expected.contains(e)) {
-                    Assert.fail("Not found in expected: "
-                            + e
-                            + ";\nexpected ("
-                            + expected.size()
-                            + "): "
-                            + expected
-                            + "\nactual ("
-                            + actual.size()
-                            + "): "
-                            + actual);
-                }
-            }
-
-            if (expected.size() != actual.size()) {
-                Assert.fail("Size does not match: "
-                        + expected.size()
-                        + " vs "
-                        + actual.size()
-                        + ";\nexpected: "
-                        + expected
-                        + "\nactual: "
-                        + actual);
             }
         }
     }
@@ -477,6 +349,13 @@ public class IndexedImmutableSetTest {
             Assert.assertEquals(set1, set2);
         }
 
+        @Test
+        public void of_same() {
+            IndexedImmutableSetImpl<String> set1 = IndexedImmutableSetImpl.of("a", "a");
+            Assert.assertEquals(1, set1.size());
+            Assert.assertEquals(IndexedImmutableSetImpl.of("a"), set1);
+        }
+
         @Test(expected = IllegalArgumentException.class)
         public void builder_addNull() {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
@@ -504,9 +383,9 @@ public class IndexedImmutableSetTest {
         public void builder_grow() {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
                     IndexedImmutableSetImpl.<String>builder(10).probingOverheadFactor((short) 1);
-            Set<String> reference = new HashSet<>(4100);
+            Set<String> reference = new HashSet<>(33000);
 
-            for (int i = 0; i < 4100; i++) {
+            for (int i = 0; i < 33000; i++) {
                 String e = "a" + i;
                 builder = builder.with(e);
                 reference.add(e);
@@ -518,21 +397,21 @@ public class IndexedImmutableSetTest {
         @Test
         public void builder_toString_setBacked() {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
-                    IndexedImmutableSetImpl.<String>builder(5000).with("a");
+                    IndexedImmutableSetImpl.<String>builder(33000).with("a");
             Assert.assertEquals("[a]", builder.toString());
         }
 
         @Test
         public void builder_contains_setBacked() {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
-                    IndexedImmutableSetImpl.<String>builder(5000).with("a");
+                    IndexedImmutableSetImpl.<String>builder(33000).with("a");
             Assert.assertTrue(builder.contains("a"));
             Assert.assertFalse(builder.contains("b"));
         }
 
         @Test
         public void builder_empty_setBacked() {
-            IndexedImmutableSetImpl.InternalBuilder<String> builder = IndexedImmutableSetImpl.<String>builder(5000);
+            IndexedImmutableSetImpl.InternalBuilder<String> builder = IndexedImmutableSetImpl.<String>builder(33000);
             Assert.assertEquals(0, builder.size());
             Assert.assertEquals(IndexedImmutableSetImpl.empty(), builder.build());
         }
@@ -576,13 +455,13 @@ public class IndexedImmutableSetTest {
         @Test
         public void containsAll_negative() {
             HashSet<String> more = new HashSet<>(reference);
-            more.add("xyz");
+            more.add("deos_not_exist");
             Assert.assertFalse(subject.containsAll(more));
         }
 
         @Test
         public void elementToIndex_notExists() {
-            Assert.assertEquals(-1, subject.elementToIndex("xyz"));
+            Assert.assertEquals(-1, subject.elementToIndex("does_not_exist"));
         }
 
         @Test
@@ -624,6 +503,19 @@ public class IndexedImmutableSetTest {
             Assert.assertNotEquals(-1, index);
             String element = subject.indexToElement(index);
             Assert.assertEquals("b", element);
+        }
+
+        @Test
+        public void builder() {
+            IndexedImmutableSetImpl.InternalBuilder<String> builder = IndexedImmutableSetImpl.builder(10);
+
+            for (String e : reference) {
+                builder = builder.with(e);
+                Assert.assertTrue(builder.contains(e));
+            }
+
+            IndexedImmutableSetImpl<String> result = builder.build();
+            Assert.assertEquals(reference, result);
         }
 
         @Test(expected = UnsupportedOperationException.class)
@@ -701,150 +593,98 @@ public class IndexedImmutableSetTest {
             result.add(new Object[] {set4000, IndexedImmutableSetImpl.of(set4000)});
             Set<String> set5000 = stringSet(5000);
             result.add(new Object[] {set5000, IndexedImmutableSetImpl.of(set5000)});
-            return result;
-        }
-
-        static Set<String> stringSet(int size) {
-            HashSet<String> result = new HashSet<>(size);
-
-            for (char c = 'a'; c <= 'z'; c++) {
-                result.add(String.valueOf(c));
-
-                if (result.size() >= size) {
-                    return result;
-                }
-            }
-
-            for (char c1 = 'a'; c1 <= 'z'; c1++) {
-                for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                    result.add(String.valueOf(c1) + String.valueOf(c2));
-
-                    if (result.size() >= size) {
-                        return result;
-                    }
-                }
-            }
-
-            for (char c1 = 'a'; c1 <= 'z'; c1++) {
-                for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                    for (char c3 = 'a'; c3 <= 'z'; c3++) {
-
-                        result.add(String.valueOf(c1) + String.valueOf(c2) + String.valueOf(c3));
-
-                        if (result.size() >= size) {
-                            return result;
-                        }
-                    }
-                }
-            }
+            Set<String> set16000 = stringSet(16000);
+            result.add(new Object[] {set16000, IndexedImmutableSetImpl.of(set16000)});
+            Set<String> set33000 = stringSet(33000);
+            result.add(new Object[] {set33000, IndexedImmutableSetImpl.of(set33000)});
 
             return result;
         }
     }
 
-    static String[] ipAddresses = createRandomIpAddresses(new Random(9));
-    static String[] locationNames = createRandomLocationNames(new Random(2));
-
-    private static String randomString(Random random) {
-        if (random.nextFloat() < 0.5) {
-            return randomIpAddress(random);
-        } else {
-            return randomLocationName(random);
-        }
-    }
-
-    private static String randomIpAddress(Random random) {
-        return ipAddresses[random.nextInt(ipAddresses.length)];
-    }
-
-    private static String randomLocationName(Random random) {
-        int i = (int) Math.floor(random.nextGaussian() * locationNames.length * 0.333 + locationNames.length);
-
-        if (i < 0 || i >= locationNames.length) {
-            i = random.nextInt(locationNames.length);
-        }
-
-        return locationNames[i];
-    }
-
-    private static String[] createRandomIpAddresses(Random random) {
-        String[] result = new String[2000];
-
-        for (int i = 0; i < result.length; i++) {
-            result[i] = (random.nextInt(10) + 100)
-                    + "."
-                    + (random.nextInt(5) + 100)
-                    + "."
-                    + random.nextInt(255)
-                    + "."
-                    + random.nextInt(255);
-        }
-
-        return result;
-    }
-
-    private static String[] createRandomLocationNames(Random random) {
-        String[] p1 = new String[] {
-            "Schön",
-            "Schöner",
-            "Tempel",
-            "Friedens",
-            "Friedrichs",
-            "Blanken",
-            "Rosen",
-            "Charlotten",
-            "Malch",
-            "Lichten",
-            "Lichter",
-            "Hasel",
-            "Kreuz",
-            "Pank",
-            "Marien",
-            "Adlers",
-            "Zehlen",
-            "Haken",
-            "Witten",
-            "Jungfern",
-            "Hellers",
-            "Finster",
-            "Birken",
-            "Falken",
-            "Freders",
-            "Karls",
-            "Grün",
-            "Wilmers",
-            "Heiners",
-            "Lieben",
-            "Marien",
-            "Wiesen",
-            "Biesen",
-            "Schmachten",
-            "Rahns",
-            "Rangs",
-            "Herms",
-            "Rüders",
-            "Wuster",
-            "Hoppe",
-            "Waidmanns",
-            "Wolters",
-            "Schmargen"
-        };
-        String[] p2 = new String[] {
-            "au", "ow", "berg", "feld", "felde", "tal", "thal", "höhe", "burg", "horst", "hausen", "dorf", "hof",
-            "heide", "weide", "hain", "walde", "linde", "hagen", "eiche", "witz", "rade", "werder", "see", "fließ",
-            "krug", "mark", "lust"
-        };
-
-        ArrayList<String> result = new ArrayList<>(p1.length * p2.length);
-
-        for (int i = 0; i < p1.length; i++) {
-            for (int k = 0; k < p2.length; k++) {
-                result.add(p1[i] + p2[k]);
+    private static <E> void assertEquals(HashSet<E> expected, IndexedImmutableSetImpl.InternalBuilder<E> actual) {
+        for (E e : expected) {
+            if (!actual.contains(e)) {
+                Assert.fail("Not found in actual: "
+                        + e
+                        + ";\nexpected ("
+                        + expected.size()
+                        + "): "
+                        + expected
+                        + "\nactual ("
+                        + actual.size()
+                        + "): "
+                        + actual);
             }
         }
 
-        Collections.shuffle(result, random);
+        for (E e : actual) {
+            if (!expected.contains(e)) {
+                Assert.fail("Not found in expected: "
+                        + e
+                        + ";\nexpected ("
+                        + expected.size()
+                        + "): "
+                        + expected
+                        + "\nactual ("
+                        + actual.size()
+                        + "): "
+                        + actual);
+            }
+        }
 
-        return result.toArray(new String[result.size()]);
+        if (expected.size() != actual.size()) {
+            Assert.fail("Size does not match: "
+                    + expected.size()
+                    + " vs "
+                    + actual.size()
+                    + ";\nexpected: "
+                    + expected
+                    + "\nactual: "
+                    + actual);
+        }
+    }
+
+    private static <E> void assertEquals(Set<E> expected, IndexedImmutableSetImpl<E> actual) {
+        for (E e : expected) {
+            if (!actual.contains(e)) {
+                Assert.fail("Not found in actual: "
+                        + e
+                        + ";\nexpected ("
+                        + expected.size()
+                        + "): "
+                        + expected
+                        + "\nactual ("
+                        + actual.size()
+                        + "): "
+                        + actual);
+            }
+        }
+
+        for (E e : actual) {
+            if (!expected.contains(e)) {
+                Assert.fail("Not found in expected: "
+                        + e
+                        + ";\nexpected ("
+                        + expected.size()
+                        + "): "
+                        + expected
+                        + "\nactual ("
+                        + actual.size()
+                        + "): "
+                        + actual);
+            }
+        }
+
+        if (expected.size() != actual.size()) {
+            Assert.fail("Size does not match: "
+                    + expected.size()
+                    + " vs "
+                    + actual.size()
+                    + ";\nexpected: "
+                    + expected
+                    + "\nactual: "
+                    + actual);
+        }
     }
 }

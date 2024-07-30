@@ -21,31 +21,37 @@ import java.util.Collection;
 
 abstract class UnmodifiableSetImpl<E> extends AbstractSet<E> implements UnmodifiableSet<E> {
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean add(E e) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean addAll(Collection<? extends E> e) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void clear() {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean remove(Object arg0) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean removeAll(Collection<?> arg0) {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean retainAll(Collection<?> arg0) {
         throw new UnsupportedOperationException();

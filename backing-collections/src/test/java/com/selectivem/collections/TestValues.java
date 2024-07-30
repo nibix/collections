@@ -52,7 +52,7 @@ public class TestValues {
     }
 
     private static String[] createRandomIpAddresses(Random random) {
-        String[] result = new String[10000];
+        String[] result = new String[50000];
 
         for (int i = 0; i < result.length; i++) {
             result[i] = (random.nextInt(10) + 100)
@@ -162,13 +162,17 @@ public class TestValues {
             "ruh"
         };
 
+        String[] p5 = new String[] {null, " Nord", " Süd", " Ost", " West", " Mitte", " Zentrum"};
+
         ArrayList<String> result = new ArrayList<>(p1.length * p2.length);
 
         for (int i1 = 0; i1 < p1.length; i1++) {
             for (int i2 = 0; i2 < p2.length; i2++) {
                 for (int i3 = 0; i3 < p3.length; i3++) {
                     for (int i4 = 0; i4 < p4.length; i4++) {
-                        result.add(concat(p1[i1], p2[i2], p3[i3], p4[i4]));
+                        for (int i5 = 0; i5 < p5.length; i5++) {
+                            result.add(concat(p1[i1], p2[i2], p3[i3], p4[i4], p5[i5]));
+                        }
                     }
                 }
             }

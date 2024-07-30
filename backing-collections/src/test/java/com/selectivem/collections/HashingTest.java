@@ -37,6 +37,7 @@ public class HashingTest {
     @RunWith(Parameterized.class)
     public static class ByTableSizeAndTestData {
         final int tableSize;
+        final short maxProbingDistance;
         final TestDataFactory testDataFactory;
 
         @Test
@@ -97,20 +98,19 @@ public class HashingTest {
             int sampleCount = 1000;
             int sumCount = 0;
             int sumProbingOverhead = 0;
-            List<Integer> countList = new ArrayList<>();
-            List<Double> probingOverheadList = new ArrayList<>();
+            List<Integer> countList = new ArrayList<>(sampleCount);
+            List<Double> probingOverheadList = new ArrayList<>(sampleCount);
 
             for (int i = 0; i < sampleCount; i++) {
-                String[] table = new String[tableSize + Hashing.COLLISION_HEAD_ROOM];
+                String[] table = new String[tableSize + maxProbingDistance];
                 int count = 0;
-                List<String> testValues =
-                        testDataFactory.getTestData(tableSize + Hashing.COLLISION_HEAD_ROOM + 1, random);
+                List<String> testValues = testDataFactory.getTestData(tableSize + maxProbingDistance + 1, random);
 
                 int probingOverhead = 0;
 
                 for (String value : testValues) {
                     int pos = Hashing.hashPosition(tableSize, value);
-                    int check = Hashing.checkTable(table, value, pos);
+                    int check = Hashing.checkTable(table, value, pos, maxProbingDistance);
 
                     if (check == Hashing.NO_SPACE) {
                         sumCount += count;
@@ -154,8 +154,8 @@ public class HashingTest {
 
             System.out.println("\n\n");
 
-            if (medianCapacityRatio < 0.4) {
-                Assert.fail("Median capacity ratio < 0.4: " + medianCapacityRatio + " (" + medianCapacity + ")");
+            if (medianCapacityRatio < 0.5) {
+                Assert.fail("Median capacity ratio < 0.5: " + medianCapacityRatio + " (" + medianCapacity + ")");
             }
 
             if (tableSize == 16) {
@@ -163,8 +163,8 @@ public class HashingTest {
                     Assert.fail("Median probing overhead > 2: " + medianProbingOverhead);
                 }
             } else if (tableSize == 64) {
-                if (medianProbingOverhead > 1.1) {
-                    Assert.fail("Median probing overhead > 1.1: " + medianProbingOverhead);
+                if (medianProbingOverhead > 1.3) {
+                    Assert.fail("Median probing overhead > 1.3: " + medianProbingOverhead);
                 }
             } else {
                 if (medianProbingOverhead > 1) {
@@ -175,6 +175,7 @@ public class HashingTest {
 
         public ByTableSizeAndTestData(int tableSize, TestDataFactory testDataFactory) {
             this.tableSize = tableSize;
+            this.maxProbingDistance = Hashing.maxProbingDistance(tableSize);
             this.testDataFactory = testDataFactory;
         }
 
@@ -182,7 +183,8 @@ public class HashingTest {
         public static Collection<Object[]> params() {
             List<Object[]> result = new ArrayList<>();
 
-            for (int tableSize : Arrays.asList(16, 64, 256, 1024, 4096)) {
+            for (int tableSize : Arrays.asList(
+                    0x10, 0x40, 0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000, 0x8000, 0x10000, 0x20000)) {
                 for (TestDataFactory testDataFactory : TestDataFactory.ALL) {
                     result.add(new Object[] {tableSize, testDataFactory});
                 }
