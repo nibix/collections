@@ -108,6 +108,15 @@ public class CompactMapGroupBuilderTest {
             CompactMapGroupBuilder<String, String> subject = new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
             subject.createMapBuilder(k -> "a").get("x");
         }
+
+        @Test(expected = IllegalStateException.class)
+        public void builder_build_reuse() {
+            CompactMapGroupBuilder<String, String> subject = new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
+            CompactMapGroupBuilder.MapBuilder<String, String> builder = subject.createMapBuilder();
+            builder.put("a", null);
+            builder.build();
+            builder.put("b", null);
+        }
     }
 
     @RunWith(Parameterized.class)

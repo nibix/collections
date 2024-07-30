@@ -27,6 +27,8 @@ import java.util.function.Function;
  * This class puts the priority on random access via the get() method and compactness. Map entry iteration may be slower
  * than it is for other map implementations.
  *
+ * Produced maps cannot have null keys or null values.
+ *
  * @author Nils Bandener
  */
 public class CompactMapGroupBuilder<K, V> {
@@ -43,7 +45,7 @@ public class CompactMapGroupBuilder<K, V> {
      */
     public Map<K, V> of(Map<K, V> original) {
         MapBuilder<K, V> builder = createMapBuilder();
-        original.forEach((k, v) -> builder.put(k, v));
+        original.forEach(builder::put);
         return builder.build();
     }
 
@@ -74,7 +76,7 @@ public class CompactMapGroupBuilder<K, V> {
 
     public static class MapBuilder<K, V> {
         private final CompactMapGroupBuilder<K, V> root;
-        private final V[] values;
+        private V[] values;
         private final Function<K, V> missingValueSupplier;
         private int size = 0;
         private int minIndex = Integer.MAX_VALUE;
@@ -88,7 +90,19 @@ public class CompactMapGroupBuilder<K, V> {
             root.estimatedObjectOverheadSize += 36;
         }
 
+        /**
+         * Adds a new entry to the built map.
+         *
+         * @param key the key of the mapping. Must be contained in the set with which the CompactMapGroupBuilder was
+         *            created. Must be not null
+         * @param value the value of the mapping. Must be not null.
+         *
+         * @throws IllegalArgumentException in case the key is not contained in the super set provided to
+         * CompactMapGroupBuilder. Or, in case the value is null.
+         */
         public void put(K key, V value) {
+            checkState();
+
             int i = this.root.keyToIndexMap.elementToIndex(key);
 
             if (i == -1) {
@@ -107,6 +121,8 @@ public class CompactMapGroupBuilder<K, V> {
         }
 
         public V get(K key) {
+            checkState();
+
             int i = this.root.keyToIndexMap.elementToIndex(key);
 
             if (i == -1) {
@@ -127,60 +143,77 @@ public class CompactMapGroupBuilder<K, V> {
             return this.size;
         }
 
+        /**
+         * Builds the actual map instance. This builder is invalidated afterward, i.e., it cannot be used any more.
+         */
         public Map<K, V> build() {
             return build(null);
         }
 
+        /**
+         * Builds the actual map instance. This builder is invalidated afterward, i.e., it cannot be used any more.
+         *
+         * The values of the final map instance are passed through the given valueMappingFunction. This allows you
+         * to perform post-processing steps on the value. For example, if the value is a builder instance itself,
+         * you can use the valueMappingFunction to build it as well.
+         */
         public <V2> Map<K, V2> build(Function<V, V2> valueMappingFunction) {
-            if (size == 0) {
-                return ImmutableMapImpl.empty();
-            } else if (size == 1) {
-                int i = findNext(0);
-                V2 value = mapValue(this.values[i], valueMappingFunction);
-                K key = this.root.keyToIndexMap.indexToElement(i);
-                return ImmutableMapImpl.of(key, value);
-            } else if (size == 2) {
-                int i = findNext(0);
-                V2 v1 = mapValue(this.values[i], valueMappingFunction);
-                K k1 = this.root.keyToIndexMap.indexToElement(i);
-                i = findNext(i + 1);
-                V2 v2 = mapValue(this.values[i], valueMappingFunction);
-                K k2 = this.root.keyToIndexMap.indexToElement(i);
-                return ImmutableMapImpl.of(k1, v1, k2, v2);
-            } else {
-                V2[] mappedValues = GenericArrays.mapInPlace(this.values, valueMappingFunction);
+            checkState();
 
-                int estimatedIndexRefMapSize = this.estimatedSize;
-
-                if (minIndex > 4 || maxIndex < values.length - 5) {
-                    estimatedIndexRefMapSize -= (minIndex + (values.length - maxIndex)) * 8;
-                }
-
-                int estimatedBasicHashTableSize = ImmutableMapImpl.HashArrayBackedMap.getEstimatedByteSize(size);
-
-                if (estimatedBasicHashTableSize < estimatedIndexRefMapSize) {
-                    ImmutableMapImpl<K, V2> basicHashTable =
-                            buildBasicHashTable(mappedValues, estimatedIndexRefMapSize);
-
-                    if (basicHashTable != null && basicHashTable.getEstimatedByteSize() < estimatedIndexRefMapSize) {
-                        root.estimatedBackingArraySize += basicHashTable.getEstimatedByteSize() - this.estimatedSize;
-                        return basicHashTable;
-                    }
-                }
-
-                V2[] compactedValues;
-                int valuesArrayOffset;
-
-                if (minIndex > 4 || maxIndex < values.length - 5) {
-                    compactedValues = GenericArrays.create(maxIndex - minIndex + 1);
-                    System.arraycopy(mappedValues, minIndex, compactedValues, 0, maxIndex - minIndex + 1);
-                    valuesArrayOffset = minIndex;
+            try {
+                if (size == 0) {
+                    return ImmutableMapImpl.empty();
+                } else if (size == 1) {
+                    int i = findNext(0);
+                    V2 value = mapValue(this.values[i], valueMappingFunction);
+                    K key = this.root.keyToIndexMap.indexToElement(i);
+                    return ImmutableMapImpl.of(key, value);
+                } else if (size == 2) {
+                    int i = findNext(0);
+                    V2 v1 = mapValue(this.values[i], valueMappingFunction);
+                    K k1 = this.root.keyToIndexMap.indexToElement(i);
+                    i = findNext(i + 1);
+                    V2 v2 = mapValue(this.values[i], valueMappingFunction);
+                    K k2 = this.root.keyToIndexMap.indexToElement(i);
+                    return ImmutableMapImpl.of(k1, v1, k2, v2);
                 } else {
-                    compactedValues = mappedValues;
-                    valuesArrayOffset = 0;
-                }
+                    V2[] mappedValues = GenericArrays.mapInPlace(this.values, valueMappingFunction);
 
-                return new IndexRefMapImpl<>(compactedValues, size, root.keyToIndexMap, valuesArrayOffset);
+                    int estimatedIndexRefMapSize = this.estimatedSize;
+
+                    if (minIndex > 4 || maxIndex < values.length - 5) {
+                        estimatedIndexRefMapSize -= (minIndex + (values.length - maxIndex)) * 8;
+                    }
+
+                    int estimatedBasicHashTableSize = ImmutableMapImpl.HashArrayBackedMap.getEstimatedByteSize(size);
+
+                    if (estimatedBasicHashTableSize < estimatedIndexRefMapSize) {
+                        ImmutableMapImpl<K, V2> basicHashTable =
+                                buildBasicHashTable(mappedValues, estimatedIndexRefMapSize);
+
+                        if (basicHashTable != null && basicHashTable.getEstimatedByteSize() < estimatedIndexRefMapSize) {
+                            root.estimatedBackingArraySize += basicHashTable.getEstimatedByteSize() - this.estimatedSize;
+                            return basicHashTable;
+                        }
+                    }
+
+                    V2[] compactedValues;
+                    int valuesArrayOffset;
+
+                    if (minIndex > 4 || maxIndex < values.length - 5) {
+                        compactedValues = GenericArrays.create(maxIndex - minIndex + 1);
+                        System.arraycopy(mappedValues, minIndex, compactedValues, 0, maxIndex - minIndex + 1);
+                        valuesArrayOffset = minIndex;
+                    } else {
+                        compactedValues = mappedValues;
+                        valuesArrayOffset = 0;
+                    }
+
+                    return new IndexRefMapImpl<>(compactedValues, size, root.keyToIndexMap, valuesArrayOffset);
+                }
+            } finally {
+                // This invalidates this instance
+                this.values = null;
             }
         }
 
@@ -214,6 +247,12 @@ public class CompactMapGroupBuilder<K, V> {
             }
 
             return -1;
+        }
+
+        private void checkState() {
+            if (this.values == null) {
+                throw new IllegalStateException("This builder instance was already built");
+            }
         }
 
         private <V2> ImmutableMapImpl<K, V2> buildBasicHashTable(V2[] values, int maxByteSize) {

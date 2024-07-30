@@ -21,6 +21,12 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+/**
+ * A Map implementation which is just composed of a values array and an IndexedImmutableSetImpl map instance
+ * which provides indices into this array.
+ * @param <K>
+ * @param <V>
+ */
 class IndexRefMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
     private final V[] values;
     private final int size;
