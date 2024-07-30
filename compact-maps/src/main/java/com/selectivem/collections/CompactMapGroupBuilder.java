@@ -21,12 +21,12 @@ import java.util.function.Function;
 
 /**
  * Allows the creation of space efficient maps where the keys are a sub-set of the super-set specified in the constructor.
- *
+ * <p>
  * This class copies the super-set. All maps produced by this class will be immutable.
- *
+ * <p>
  * This class puts the priority on random access via the get() method and compactness. Map entry iteration may be slower
  * than it is for other map implementations.
- *
+ * <p>
  * Produced maps cannot have null keys or null values.
  *
  * @author Nils Bandener
@@ -144,15 +144,15 @@ public class CompactMapGroupBuilder<K, V> {
         }
 
         /**
-         * Builds the actual map instance. This builder is invalidated afterward, i.e., it cannot be used any more.
+         * Builds the actual map instance. This builder is invalidated afterward, i.e., it cannot be used anymore.
          */
         public Map<K, V> build() {
             return build(null);
         }
 
         /**
-         * Builds the actual map instance. This builder is invalidated afterward, i.e., it cannot be used any more.
-         *
+         * Builds the actual map instance. This builder is invalidated afterward, i.e., it cannot be used anymore.
+         * <p>
          * The values of the final map instance are passed through the given valueMappingFunction. This allows you
          * to perform post-processing steps on the value. For example, if the value is a builder instance itself,
          * you can use the valueMappingFunction to build it as well.

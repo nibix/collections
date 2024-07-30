@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 
 /**
  * Represents a set that does not allow modification via its public methods.
- *
+ * <p>
  * Possibly, such a set is also immutable, i.e., guaranteed to never change.
  * However, it is also possible that an UnmodifiableSet changes "behind" the scenes.
  * This can be the case for views on other collections.

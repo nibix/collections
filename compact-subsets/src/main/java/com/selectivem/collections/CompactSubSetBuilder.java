@@ -19,9 +19,9 @@ import java.util.Set;
 
 /**
  * Allows the creation of space efficient sub-sets of the super-set specified in the constructor.
- *
+ * <p>
  * The sub-sets are usually represented by bitfields, thus these can be very compact.
- *
+ * <p>
  * This class copies the super-set. All sub-sets produced by this class will be immutable.
  *
  * @author Nils Bandener
@@ -37,10 +37,10 @@ public class CompactSubSetBuilder<E> {
 
     /**
      * Creates a DeduplicatingCompactSubSetBuilder which gives you set deduplication functionality.
-     *
+     * <p>
      * The advantage of calling this method instead of calling new DeduplicatingCompactSubSetBuilder() is that
      * the copy of the super-set will be shared by both instances.
-     *
+     * <p>
      * This also allows for optimizations of the containsAny() and containsAll() calls.
      */
     public DeduplicatingCompactSubSetBuilder<E> deduplicatingBuilder() {
@@ -50,7 +50,7 @@ public class CompactSubSetBuilder<E> {
     /**
      * Creates a compact set representing the intersection of the given set and the super-set
      * given when constructing the CompactSubSetBuilder instance.
-     *
+     * <p>
      * Elements in the given set which are not contained in the super-set will be silently
      * ignored.
      */

@@ -40,14 +40,14 @@ import java.util.function.Predicate;
  * Specialized data structure which models a two-dimensional matrix. Each cell of the matrix can be marked as checked or unchecked.
  * Initially, all cells will be unchecked. The matrix is defined by supplying a set of row elements and a set of column elements. Each
  * cell can be addressed by a row element and a column element.
- *
+ * <p>
  * You can use the check() and related methods to mark one or more cells as checked. You can use the isComplete() method to check whether
  * all cells are checked. There are additional methods, which allow you to retrieve the checked and unchecked cells.
- *
+ * <p>
  * The implementation aims at runtime CPU efficiency. Checking/unchecking single cells is possible in constant (O(1)) time.
- *
+ * <p>
  * The implementation is not thread safe. Objects of this class are not meant to be shared between threads.
- *
+ * <p>
  * The data structure does not support null rows or null columns.  The element class must implement hashCode() and equals().
  *
  * @author Nils Bandener
@@ -177,7 +177,7 @@ public interface CheckTable<R, C> {
 
     /**
      * Un-checks all columns of the specified row.
-     *
+     * <p>
      * In contrast to uncheckRow(), this will not throw an exception if the given row is not known to this instance.
      * Instead, the call will be silently ignored.
      *

@@ -40,11 +40,11 @@ import java.util.function.Predicate;
  * Specialized data structure which models a set of elements, which can be checked and unchecked. Initially, all elements will be unchecked.
  * You can use the check() and related methods to mark one or more elements as checked. You can use the isComplete() method to check whether
  * all elements are checked. There are additional methods, which allow you to retrieve the checked and unchecked elements.
- *
+ * <p>
  * The implementation aims at runtime CPU efficiency. Checking/unchecking single elements is possible in constant (O(1)) time.
- *
+ * <p>
  * The implementation is not thread safe. Objects of this class are not meant to be shared between threads.
- *
+ * <p>
  * The data structure does not support null elements. The element class must implement hashCode() and equals().
  *
  * @author Nils Bandener
@@ -145,7 +145,7 @@ public interface CheckList<E> {
     /**
      * Returns all the elements that are marked as checked.
      * The returned Set cannot be modified.
-     *
+     * <p>
      * See also iterateCheckedElements() for a method which mostly returns the same information, but with a minimal heap footprint.
      */
     Set<E> getCheckedElements();
@@ -153,7 +153,7 @@ public interface CheckList<E> {
     /**
      * Returns all the elements that are marked as not checked.
      * The returned Set cannot be modified.
-     *
+     * <p>
      * See also iterateUncheckedElements() for a method which mostly returns the same information, but with a minimal heap footprint.
      */
     Set<E> getUncheckedElements();

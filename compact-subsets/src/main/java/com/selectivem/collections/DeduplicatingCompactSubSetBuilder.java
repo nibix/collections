@@ -23,16 +23,17 @@ import java.util.Set;
  * Allows the creation of compact sub-sets of a given super-set. It also provides space and compute efficient
  * deduplication of sub-set instances. Creating several sub-set builders which end up to have the same elements,
  * will result in the same ImmutableCompactSubSet instances to be produced.
- *
+ * <p>
  * In order to provide this functionality efficiently, users of this class need to follow a certain protocol:
- *
- * - Iterate through the super-set in its natural iteration order.
- * - Call next() for the current element.
- * - Call DeduplicatingCompactSubSetBuilder.SubSetBuilder.add() for the current element on any
+ * <ul>
+ * <li>Iterate through the super-set in its natural iteration order.
+ * <li>Call next() for the current element.
+ * <li>Call DeduplicatingCompactSubSetBuilder.SubSetBuilder.add() for the current element on any
  *   DeduplicatingCompactSubSetBuilder.SubSetBuilder instance you want.
- * - Only then advance to the next element, also call next() for that one.
- * - After all sets have been added, call build(). This will return a DeduplicatingCompactSubSetBuilder.Completed
+ * <li>Only then advance to the next element, also call next() for that one.
+ * <li>After all sets have been added, call build(). This will return a DeduplicatingCompactSubSetBuilder.Completed
  *   instance which allows you to call the build() methods on the SubSetBuilder instances.
+ * </ul>
  *
  * @author Nils Bandener
  */
@@ -67,7 +68,7 @@ public class DeduplicatingCompactSubSetBuilder<E> {
      * Informs the builder about the next element that is going to be added to the sub-set builders.
      * The add() method of the sub-set builders will only accept the given element until `next()` is
      * called again with another element.
-     *
+     * <p>
      * Note: You need to follow the iteration order of the superSet originally supplied to this instance.
      * You can however skip elements completely.
      */
@@ -139,10 +140,12 @@ public class DeduplicatingCompactSubSetBuilder<E> {
 
         /**
          * Adds an element to this builder instance.
-         *
+         * <p>
          * Note: You need to observe the protocol requirements imposed by DeduplicatingCompactSubSetBuilder:
-         * - You can only call add() for elements that are member of the super-set given when the DeduplicatingCompactSubSetBuilder was created. Otherwise, a IllegalArgumentException will be thrown.
-         * - You must stick to the iteration order for the super-set.
+         * <ul>
+         * <li>You can only call add() for elements that are member of the super-set given when the DeduplicatingCompactSubSetBuilder was created. Otherwise, a IllegalArgumentException will be thrown.
+         * <li>You must stick to the iteration order for the super-set.
+         * </ul>
          */
         public void add(E element) {
             if (root.candidateElements.elementToIndex(element) == -1) {

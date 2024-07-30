@@ -179,7 +179,7 @@ abstract class Hashing {
 
     /**
      * Checks whether the given element is contained in the table or whether it can be inserted.
-     *
+     * <p>
      * Returns NO_SPACE if it cannot be inserted. If it returns a value >= 0, it is not contained and can be inserted at
      * the given position. If it returns a value < 0, the actual position can be calculated as -returnValue - 1.
      */
