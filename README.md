@@ -32,7 +32,7 @@ a check table to tick off what privileges are present and which are not present.
 <dependency>
     <groupId>com.selectivem.collections</groupId>
     <artifactId>checklists</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
@@ -47,7 +47,22 @@ bitfields, thus they can be extremely space efficient. Efficient deduplication o
 <dependency>
     <groupId>com.selectivem.collections</groupId>
     <artifactId>compact-subsets</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
+</dependency>
+```
+
+## compact-maps
+
+Builder classes that allow you to create groups of maps that share a common super-set of keys. The produced maps may
+share their key hash tables and only explicitly specify the value tables. Thus, these maps take about 50% less heap than normal maps.
+
+### Maven dependency
+
+```
+<dependency>
+    <groupId>com.selectivem.collections</groupId>
+    <artifactId>compact-maps</artifactId>
+    <version>1.3.0</version>
 </dependency>
 ```
 
@@ -61,7 +76,7 @@ Bare specialized Java interfaces for collections. Includes `UnmodifiableCollecti
 <dependency>
     <groupId>com.selectivem.collections</groupId>
     <artifactId>interfaces</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
