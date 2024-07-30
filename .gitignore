@@ -11,3 +11,4 @@
 /compact-maps/target/
 /special-collections-complete/target/
 /special-collections-complete/dependency-reduced-pom.xml
+/**/.flattened-pom.xml
