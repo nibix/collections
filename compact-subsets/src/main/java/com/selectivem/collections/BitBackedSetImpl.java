@@ -15,6 +15,7 @@
  */
 package com.selectivem.collections;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -309,6 +310,17 @@ abstract class BitBackedSetImpl<E> extends UnmodifiableSetImpl<E> implements Imm
                 return super.equals(o);
             }
         }
+    }
+
+    @Override
+    public boolean containsAny(Collection<E> elements) {
+        for (E e : elements) {
+            if (contains(e)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     static int bitArraySize(int size) {
