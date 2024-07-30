@@ -191,8 +191,10 @@ public class CompactMapGroupBuilder<K, V> {
                         ImmutableMapImpl<K, V2> basicHashTable =
                                 buildBasicHashTable(mappedValues, estimatedIndexRefMapSize);
 
-                        if (basicHashTable != null && basicHashTable.getEstimatedByteSize() < estimatedIndexRefMapSize) {
-                            root.estimatedBackingArraySize += basicHashTable.getEstimatedByteSize() - this.estimatedSize;
+                        if (basicHashTable != null
+                                && basicHashTable.getEstimatedByteSize() < estimatedIndexRefMapSize) {
+                            root.estimatedBackingArraySize +=
+                                    basicHashTable.getEstimatedByteSize() - this.estimatedSize;
                             return basicHashTable;
                         }
                     }

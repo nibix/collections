@@ -32,7 +32,7 @@
     <module>compact-subsets</module>
     <module>compact-maps</module>
     <module>backing-collections</module>
-      <module>special-collections-complete</module>
+    <module>special-collections-complete</module>
   </modules>
 
   <scm>

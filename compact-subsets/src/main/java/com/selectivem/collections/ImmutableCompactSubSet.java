@@ -15,6 +15,8 @@
  */
 package com.selectivem.collections;
 
+import java.util.Collection;
+
 /**
  * Instances of this interface are produced by the classes CompactSubSetBuilder and DeduplicatingCompactSubSetBuilder.
  *
@@ -23,4 +25,6 @@ package com.selectivem.collections;
  * Additionally, the containsAny() and containsAll() methods might use bit operations to provide computation
  * efficient functionality.
  */
-public interface ImmutableCompactSubSet<E> extends UnmodifiableSet<E> {}
+public interface ImmutableCompactSubSet<E> extends UnmodifiableSet<E> {
+    boolean containsAny(Collection<E> elements);
+}

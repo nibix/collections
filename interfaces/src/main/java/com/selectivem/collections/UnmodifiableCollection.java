@@ -25,7 +25,7 @@ import java.util.function.Predicate;
  * However, it is also possible that an UnmodifiableSet changes "behind" the scenes.
  * This can be the case for views on other collections.
  */
-public interface UnmodifiableCollection<E> extends FluentCollection<E> {
+public interface UnmodifiableCollection<E> extends Collection<E> {
 
     @Override
     @Deprecated

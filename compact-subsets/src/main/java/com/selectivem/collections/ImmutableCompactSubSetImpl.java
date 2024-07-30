@@ -38,7 +38,13 @@ abstract class ImmutableCompactSubSetImpl {
         return new ImmutableCompactSubSet<E>() {
 
             public boolean containsAny(Collection<E> elements) {
-                return delegate.containsAny(elements);
+                for (E e : elements) {
+                    if (contains(e)) {
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
             public int size() {
