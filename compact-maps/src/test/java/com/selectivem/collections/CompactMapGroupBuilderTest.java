@@ -40,9 +40,8 @@ public class CompactMapGroupBuilderTest {
         @Test
         public void get_missingValueProvider() {
             CompactMapGroupBuilder<String, List<String>> subject =
-                    new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
-            CompactMapGroupBuilder.MapBuilder<String, List<String>> builder =
-                    subject.createMapBuilder(k -> new ArrayList<>());
+                    new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"), k -> new ArrayList<>());
+            CompactMapGroupBuilder.MapBuilder<String, List<String>> builder = subject.createMapBuilder();
 
             builder.get("a").add("x");
             Assert.assertEquals(Arrays.asList("x"), builder.get("a"));
@@ -105,8 +104,9 @@ public class CompactMapGroupBuilderTest {
 
         @Test(expected = IllegalArgumentException.class)
         public void builder_get_invalidKey() {
-            CompactMapGroupBuilder<String, String> subject = new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"));
-            subject.createMapBuilder(k -> "a").get("x");
+            CompactMapGroupBuilder<String, String> subject =
+                    new CompactMapGroupBuilder<>(setOf("a", "b", "c", "d"), k -> "a");
+            subject.createMapBuilder().get("x");
         }
 
         @Test(expected = IllegalStateException.class)
