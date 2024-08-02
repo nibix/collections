@@ -33,11 +33,31 @@ import java.util.function.Function;
  */
 public class CompactMapGroupBuilder<K, V> {
     private final IndexedImmutableSetImpl<K> keyToIndexMap;
+    private final Function<K, V> missingValueSupplier;
     private int estimatedBackingArraySize = 0;
     private int estimatedObjectOverheadSize = 0;
 
-    public CompactMapGroupBuilder(Set<K> keySuperSet) {
+    /**
+     * Creates a new CompactMapGroupBuilder for the given keys.
+     *
+     * @param keySuperSet The keys that may be used for the map builder instances created by this class instance.
+     *                    The set will be copied.
+     * @param missingValueSupplier In case MapBuilder.get() is called for a non-existing entry,
+     *                             this supplier is used to create a default value. This value is then stored in the map.
+     */
+    public CompactMapGroupBuilder(Set<K> keySuperSet, Function<K, V> missingValueSupplier) {
         this.keyToIndexMap = IndexedImmutableSetImpl.of(keySuperSet);
+        this.missingValueSupplier = missingValueSupplier;
+    }
+
+    /**
+     * Creates a new CompactMapGroupBuilder for the given keys.
+     *
+     * @param keySuperSet The keys that may be used for the map builder instances created by this class instance.
+     *                    The set will be copied.
+     */
+    public CompactMapGroupBuilder(Set<K> keySuperSet) {
+        this(keySuperSet, null);
     }
 
     /**
@@ -53,17 +73,7 @@ public class CompactMapGroupBuilder<K, V> {
      * Returns a MapBuilder instance which can be used to build compact map instances.
      */
     public MapBuilder<K, V> createMapBuilder() {
-        return new MapBuilder<>(this, null);
-    }
-
-    /**
-     * Returns a MapBuilder instance which can be used to build compact map instances.
-     *
-     * @param missingValueSupplier In case MapBuilder.get() is called for a non-existing entry,
-     *                             this supplier is used to create a default value. This value is then stored in the map.
-     */
-    public MapBuilder<K, V> createMapBuilder(Function<K, V> missingValueSupplier) {
-        return new MapBuilder<>(this, missingValueSupplier);
+        return new MapBuilder<>(this, this.missingValueSupplier);
     }
 
     /**
