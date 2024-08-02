@@ -284,7 +284,8 @@ public class DeduplicatingCompactSubSetBuilderTest {
         public void addUnknownElement() {
             Set<String> superSet = new HashSet<>(Arrays.asList("a", "b", "c", "d"));
             DeduplicatingCompactSubSetBuilder<String> subject = new DeduplicatingCompactSubSetBuilder<>(superSet);
-            subject.createSubSetBuilder().add("x");
+            DeduplicatingCompactSubSetBuilder.SubSetBuilder<String> builder = subject.createSubSetBuilder();
+            subject.next("x");
         }
     }
 }

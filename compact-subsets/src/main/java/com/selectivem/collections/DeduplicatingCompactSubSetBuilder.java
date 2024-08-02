@@ -41,6 +41,7 @@ public class DeduplicatingCompactSubSetBuilder<E> {
     private final IndexedImmutableSetImpl<E> candidateElements;
     private final int bitArraySize;
     private E currentElement;
+    private int currentElementIndex;
     private BackingBitSetBuilder<E> backingCollectionWithCurrentElementOnly = null;
     private List<SubSetBuilder<E>> subSetBuilders = new ArrayList<>();
     private List<BackingBitSetBuilder<E>> backingBitSets = new ArrayList<>();
@@ -77,7 +78,14 @@ public class DeduplicatingCompactSubSetBuilder<E> {
             this.finishCurrentElement();
         }
 
+        int currentElementIndex = this.candidateElements.elementToIndex(candidateElement);
+        if (currentElementIndex == -1) {
+            throw new IllegalArgumentException(
+                    "Element " + candidateElement + " is not part of super set " + this.candidateElements);
+        }
+
         this.currentElement = candidateElement;
+        this.currentElementIndex = currentElementIndex;
     }
 
     /**
@@ -98,13 +106,15 @@ public class DeduplicatingCompactSubSetBuilder<E> {
         return this.estimatedBackingArraySize + this.estimatedObjectOverheadSize;
     }
 
-    void validateCurrentElement(E candidateElement) {
+    int validateCurrentElement(E candidateElement) {
         if (this.currentElement != null) {
             if (!candidateElement.equals(this.currentElement)) {
                 throw new IllegalStateException(
                         "Trying to add an element which is not the current element; candidateElement: "
                                 + candidateElement + "; currentElement: " + currentElement);
             }
+
+            return this.currentElementIndex;
         } else {
             throw new IllegalStateException("next() must be called before an element can be added");
         }
@@ -148,24 +158,19 @@ public class DeduplicatingCompactSubSetBuilder<E> {
          * </ul>
          */
         public void add(E element) {
-            if (root.candidateElements.elementToIndex(element) == -1) {
-                throw new IllegalArgumentException(
-                        "Element " + element + " is not part of super set " + root.candidateElements);
-            }
-
-            this.root.validateCurrentElement(element);
+            int elementIndex = this.root.validateCurrentElement(element);
 
             if (size == 0) {
                 if (root.backingCollectionWithCurrentElementOnly != null) {
                     this.backingCollection = root.backingCollectionWithCurrentElementOnly;
                 } else {
                     this.backingCollection =
-                            root.backingCollectionWithCurrentElementOnly = new BackingBitSetBuilder<>(element, root);
+                            root.backingCollectionWithCurrentElementOnly = new BackingBitSetBuilder<>(element, elementIndex, root);
                 }
 
                 this.size = 1;
             } else {
-                backingCollection.offeredElement = element;
+                backingCollection.offerElement(element, elementIndex);
                 this.size++;
             }
             this.lastAddedElement = element;
@@ -209,6 +214,8 @@ public class DeduplicatingCompactSubSetBuilder<E> {
     static final class BackingBitSetBuilder<E> {
 
         private E offeredElement;
+        private int offeredElementIndex = -1;
+
         private long[] bits;
         private int size;
         private final IndexedImmutableSetImpl<E> elementToIndexMap;
@@ -218,13 +225,12 @@ public class DeduplicatingCompactSubSetBuilder<E> {
         private ImmutableCompactSubSet<E> finalBuildResult;
         private E firstElement;
 
-        BackingBitSetBuilder(E element, DeduplicatingCompactSubSetBuilder<E> root) {
+        BackingBitSetBuilder(E element, int elementIndex, DeduplicatingCompactSubSetBuilder<E> root) {
             this.elementToIndexMap = root.candidateElements;
             this.firstElement = element;
             this.size = 1;
-            int index = elementToIndexMap.elementToIndex(element);
-            long bit = 1l << (index & 0x3f);
-            int arrayIndex = index >> 6;
+            long bit = 1l << (elementIndex & 0x3f);
+            int arrayIndex = elementIndex >> 6;
             this.bitArrayOffset = arrayIndex;
             this.bits = new long[root.bitArraySize - this.bitArrayOffset];
             this.bits[0] = bit;
@@ -261,22 +267,27 @@ public class DeduplicatingCompactSubSetBuilder<E> {
             this.copyWithNone = null;
         }
 
-        void addOfferedElement() {
-            if (offeredElement != null) {
-                add(offeredElement);
-                offeredElement = null;
-            }
+        void offerElement(E offeredElement, int offeredElementIndex) {
+            this.offeredElement = offeredElement;
+            this.offeredElementIndex = offeredElementIndex;
         }
 
-        void add(E element) {
-            int index = elementToIndexMap.elementToIndex(element);
+        void addOfferedElement() {
+            if (offeredElement == null) {
+                return;
+            }
 
-            if (BitBackedSetImpl.setBit(this.bits, index, this.bitArrayOffset)) {
-                this.size++;
+            try {
+                if (BitBackedSetImpl.setBit(this.bits, this.offeredElementIndex, this.bitArrayOffset)) {
+                    this.size++;
 
-                if (this.firstElement == null) {
-                    this.firstElement = element;
+                    if (this.firstElement == null) {
+                        this.firstElement = this.offeredElement;
+                    }
                 }
+            } finally {
+                this.offeredElement = null;
+                this.offeredElementIndex = -1;
             }
         }
 
