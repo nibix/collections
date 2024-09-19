@@ -15,11 +15,10 @@
  */
 package com.selectivem.collections;
 
-import java.util.Arrays;
+import static com.selectivem.collections.SimpleTestData.*;
+
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -152,9 +151,5 @@ public class ImmutableCompactSubSetImplTest {
         Assert.assertSame(delegate.parallelStream(), subject.parallelStream());
         Assert.assertSame(delegate.stream(), subject.stream());
         Assert.assertSame(delegate.spliterator(), subject.spliterator());
-    }
-
-    static Set<String> setOf(String... elements) {
-        return new HashSet<>(Arrays.asList(elements));
     }
 }

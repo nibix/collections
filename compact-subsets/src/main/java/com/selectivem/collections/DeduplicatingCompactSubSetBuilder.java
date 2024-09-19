@@ -74,6 +74,9 @@ public class DeduplicatingCompactSubSetBuilder<E> {
      * You can however skip elements completely.
      */
     public void next(E candidateElement) {
+        E prevElement = this.currentElement;
+        int prevElementIndex = this.currentElementIndex;
+
         if (this.currentElement != null) {
             this.finishCurrentElement();
         }
@@ -82,6 +85,13 @@ public class DeduplicatingCompactSubSetBuilder<E> {
         if (currentElementIndex == -1) {
             throw new IllegalArgumentException(
                     "Element " + candidateElement + " is not part of super set " + this.candidateElements);
+        }
+
+        if (prevElement != null && currentElementIndex <= prevElementIndex) {
+            throw new IllegalArgumentException(
+                    "Element " + candidateElement + " comes in the iteration order of the super set before "
+                            + prevElement + " (" + currentElementIndex + " < " + prevElementIndex + ");"
+                            + "You must follow the iteration order of the super set specified in the constructor.");
         }
 
         this.currentElement = candidateElement;
@@ -164,8 +174,8 @@ public class DeduplicatingCompactSubSetBuilder<E> {
                 if (root.backingCollectionWithCurrentElementOnly != null) {
                     this.backingCollection = root.backingCollectionWithCurrentElementOnly;
                 } else {
-                    this.backingCollection =
-                            root.backingCollectionWithCurrentElementOnly = new BackingBitSetBuilder<>(element, elementIndex, root);
+                    this.backingCollection = root.backingCollectionWithCurrentElementOnly =
+                            new BackingBitSetBuilder<>(element, elementIndex, root);
                 }
 
                 this.size = 1;
