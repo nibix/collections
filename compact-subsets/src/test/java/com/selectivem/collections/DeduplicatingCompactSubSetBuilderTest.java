@@ -15,10 +15,13 @@
  */
 package com.selectivem.collections;
 
+import static com.selectivem.collections.SimpleTestData.orderedSetOfNumberedStrings;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import org.junit.Assert;
@@ -134,7 +137,7 @@ public class DeduplicatingCompactSubSetBuilderTest {
         public Randomized(int seed, int size) {
             this.size = size;
             this.random = new Random(seed);
-            this.superSet = createSuperSet(size);
+            this.superSet = orderedSetOfNumberedStrings("a", size);
         }
 
         @Parameterized.Parameters(name = "seed: {0}; size: {1}")
@@ -247,16 +250,6 @@ public class DeduplicatingCompactSubSetBuilderTest {
                 return f <= this.inclusionProbability;
             }
         }
-
-        static Set<String> createSuperSet(int size) {
-            Set<String> superSet = new HashSet<>();
-
-            for (int i = 0; i < size; i++) {
-                superSet.add("a" + i);
-            }
-
-            return superSet;
-        }
     }
 
     public static class Basic {
@@ -278,6 +271,33 @@ public class DeduplicatingCompactSubSetBuilderTest {
 
             subject.next("b");
             subject.createSubSetBuilder().add("a");
+        }
+
+        @Test
+        public void protocolError_wrongSequence() {
+            Set<String> superSet = orderedSetOfNumberedStrings("a", 400);
+
+            DeduplicatingCompactSubSetBuilder<String> subject = new DeduplicatingCompactSubSetBuilder<>(superSet);
+
+            List<String> superSetList = new ArrayList<>(superSet);
+
+            DeduplicatingCompactSubSetBuilder.SubSetBuilder<String> subSetBuilder1 = subject.createSubSetBuilder();
+            Random random = new Random(1);
+
+            for (int i = 10; i < 100; i++) {
+                subject.next(superSetList.get(i));
+
+                if (random.nextFloat() > 0.2) {
+                    subSetBuilder1.add(superSetList.get(i));
+                }
+            }
+
+            try {
+                subject.next(superSetList.get(1));
+                Assert.fail("This should have failed with an IllegalArgumentException");
+            } catch (IllegalArgumentException e) {
+                Assert.assertTrue(e.getMessage(), e.getMessage().contains("iteration order"));
+            }
         }
 
         @Test(expected = IllegalArgumentException.class)

@@ -84,6 +84,13 @@ public class DeduplicatingCompactSubSetBuilder<E> {
                     "Element " + candidateElement + " is not part of super set " + this.candidateElements);
         }
 
+        if (currentElementIndex <= this.currentElementIndex) {
+            throw new IllegalArgumentException(
+                    "Element " + candidateElement + " comes in the iteration order of the super set before "
+                            + this.currentElement + " (" + currentElementIndex + " < " + this.currentElementIndex + ");"
+                            + "You must follow the iteration order of the super set specified in the constructor.");
+        }
+
         this.currentElement = candidateElement;
         this.currentElementIndex = currentElementIndex;
     }
@@ -164,8 +171,8 @@ public class DeduplicatingCompactSubSetBuilder<E> {
                 if (root.backingCollectionWithCurrentElementOnly != null) {
                     this.backingCollection = root.backingCollectionWithCurrentElementOnly;
                 } else {
-                    this.backingCollection =
-                            root.backingCollectionWithCurrentElementOnly = new BackingBitSetBuilder<>(element, elementIndex, root);
+                    this.backingCollection = root.backingCollectionWithCurrentElementOnly =
+                            new BackingBitSetBuilder<>(element, elementIndex, root);
                 }
 
                 this.size = 1;

@@ -15,10 +15,10 @@
  */
 package com.selectivem.collections;
 
+import static com.selectivem.collections.SimpleTestData.*;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
@@ -98,57 +98,10 @@ public class CompactSubSetBuilderTest {
             result.add(new Object[] {setOf("a"), setOf("a", "xx")});
             result.add(new Object[] {setOf("a", "b"), setOf("x")});
             result.add(new Object[] {setOf("a", "b"), setOf("a", "xx")});
-            result.add(new Object[] {stringSet(100), setOf("an", "xx")});
-            result.add(new Object[] {stringSet(100), setOf("a", "xx")});
-            result.add(new Object[] {stringSet(100), stringSet(90)});
-            result.add(new Object[] {stringSet(700), stringSet(70)});
-
-            return result;
-        }
-
-        static Set<String> setOf(String... elements) {
-            return new HashSet<>(Arrays.asList(elements));
-        }
-
-        static Set<String> intersection(Set<String> set1, Set<String> set2) {
-            HashSet<String> result = new HashSet<>(set1);
-            result.retainAll(set2);
-            return result;
-        }
-
-        static Set<String> stringSet(int size) {
-            HashSet<String> result = new HashSet<>(size);
-
-            for (char c = 'a'; c <= 'z'; c++) {
-                result.add(String.valueOf(c));
-
-                if (result.size() >= size) {
-                    return result;
-                }
-            }
-
-            for (char c1 = 'a'; c1 <= 'z'; c1++) {
-                for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                    result.add(String.valueOf(c1) + String.valueOf(c2));
-
-                    if (result.size() >= size) {
-                        return result;
-                    }
-                }
-            }
-
-            for (char c1 = 'a'; c1 <= 'z'; c1++) {
-                for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                    for (char c3 = 'a'; c3 <= 'z'; c3++) {
-
-                        result.add(String.valueOf(c1) + String.valueOf(c2) + String.valueOf(c3));
-
-                        if (result.size() >= size) {
-                            return result;
-                        }
-                    }
-                }
-            }
+            result.add(new Object[] {setOfAtoZStrings(100), setOf("an", "xx")});
+            result.add(new Object[] {setOfAtoZStrings(100), setOf("a", "xx")});
+            result.add(new Object[] {setOfAtoZStrings(100), setOfAtoZStrings(90)});
+            result.add(new Object[] {setOfAtoZStrings(700), setOfAtoZStrings(70)});
 
             return result;
         }
