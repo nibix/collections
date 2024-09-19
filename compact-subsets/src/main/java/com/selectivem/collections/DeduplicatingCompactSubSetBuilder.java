@@ -164,8 +164,8 @@ public class DeduplicatingCompactSubSetBuilder<E> {
                 if (root.backingCollectionWithCurrentElementOnly != null) {
                     this.backingCollection = root.backingCollectionWithCurrentElementOnly;
                 } else {
-                    this.backingCollection =
-                            root.backingCollectionWithCurrentElementOnly = new BackingBitSetBuilder<>(element, elementIndex, root);
+                    this.backingCollection = root.backingCollectionWithCurrentElementOnly =
+                            new BackingBitSetBuilder<>(element, elementIndex, root);
                 }
 
                 this.size = 1;

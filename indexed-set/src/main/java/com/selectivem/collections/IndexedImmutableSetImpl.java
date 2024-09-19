@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> implements UnmodifiableSet<E> {
+abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> implements IndexedImmutableSet<E> {
     static <E> IndexedImmutableSetImpl<E> of(E e1) {
         return new OneElementSet<>(e1);
     }
@@ -100,9 +100,9 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         return this.size == 0;
     }
 
-    abstract int elementToIndex(Object element);
+    public abstract int elementToIndex(Object element);
 
-    abstract E indexToElement(int i);
+    public abstract E indexToElement(int i);
 
     static final Set<Object> EMPTY = new IndexedImmutableSetImpl<Object>(0) {
 
@@ -117,12 +117,12 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        int elementToIndex(Object element) {
+        public int elementToIndex(Object element) {
             return -1;
         }
 
         @Override
-        Object indexToElement(int i) {
+        public Object indexToElement(int i) {
             return null;
         }
     };
@@ -229,7 +229,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        int elementToIndex(Object element) {
+        public int elementToIndex(Object element) {
             if (element.equals(this.element)) {
                 return 0;
             } else {
@@ -238,7 +238,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        E indexToElement(int i) {
+        public E indexToElement(int i) {
             if (i == 0) {
                 return element;
             } else {
@@ -318,7 +318,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        int elementToIndex(Object element) {
+        public int elementToIndex(Object element) {
             if (element.equals(this.e1)) {
                 return 0;
             } else if (element.equals(this.e2)) {
@@ -329,7 +329,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        E indexToElement(int i) {
+        public E indexToElement(int i) {
             if (i == 0) {
                 return e1;
             } else if (i == 1) {
@@ -406,7 +406,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        int elementToIndex(Object element) {
+        public int elementToIndex(Object element) {
             int l = elements.length;
 
             for (int i = 0; i < l; i++) {
@@ -419,7 +419,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        E indexToElement(int i) {
+        public E indexToElement(int i) {
             if (i >= 0 && i < elements.length) {
                 return elements[i];
             } else {
@@ -466,7 +466,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        int elementToIndex(Object o) {
+        public int elementToIndex(Object o) {
             int hashPosition = hashPosition(o);
 
             if (table[hashPosition] == null) {
@@ -489,7 +489,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        E indexToElement(int i) {
+        public E indexToElement(int i) {
             if (i >= 0 && i < flat.length) {
                 return flat[i];
             } else {
@@ -816,7 +816,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        int elementToIndex(Object element) {
+        public int elementToIndex(Object element) {
             Integer pos = this.elements.get(element);
 
             if (pos != null) {
@@ -827,7 +827,7 @@ abstract class IndexedImmutableSetImpl<E> extends UnmodifiableSetImpl<E> impleme
         }
 
         @Override
-        E indexToElement(int i) {
+        public E indexToElement(int i) {
             if (i >= 0 && i < flat.length) {
                 return flat[i];
             } else {

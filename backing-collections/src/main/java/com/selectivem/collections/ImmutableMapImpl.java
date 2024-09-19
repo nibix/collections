@@ -118,7 +118,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
         @Override
         public Set<K> keySet() {
             if (keySet == null) {
-                keySet = IndexedImmutableSetImpl.of(this.key);
+                keySet = ImmutableSetImpl.of(this.key);
             }
 
             return keySet;
@@ -127,7 +127,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
         @Override
         public Collection<V> values() {
             if (values == null) {
-                values = IndexedImmutableSetImpl.of(this.value);
+                values = ImmutableSetImpl.of(this.value);
             }
 
             return values;
@@ -136,7 +136,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
         @Override
         public Set<Entry<K, V>> entrySet() {
             if (entrySet == null) {
-                entrySet = IndexedImmutableSetImpl.of(new AbstractMap.SimpleEntry<>(key, value));
+                entrySet = ImmutableSetImpl.of(new AbstractMap.SimpleEntry<>(key, value));
             }
             return entrySet;
         }
@@ -214,7 +214,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
         @Override
         public Set<K> keySet() {
             if (keySet == null) {
-                keySet = IndexedImmutableSetImpl.of(this.key1, this.key2);
+                keySet = ImmutableSetImpl.of(this.key1, this.key2);
             }
 
             return keySet;
@@ -232,7 +232,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
         @Override
         public Set<Entry<K, V>> entrySet() {
             if (entrySet == null) {
-                entrySet = IndexedImmutableSetImpl.of(
+                entrySet = ImmutableSetImpl.of(
                         new AbstractMap.SimpleEntry<>(key1, value1), new AbstractMap.SimpleEntry<>(key2, value2));
             }
             return entrySet;
@@ -850,7 +850,7 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
     private static final ImmutableMapImpl<?, ?> EMPTY = new ImmutableMapImpl<Object, Object>() {
         @Override
         public Set<Entry<Object, Object>> entrySet() {
-            return IndexedImmutableSetImpl.empty();
+            return ImmutableSetImpl.empty();
         }
 
         @Override
@@ -880,12 +880,12 @@ abstract class ImmutableMapImpl<K, V> extends UnmodifiableMapImpl<K, V> {
 
         @Override
         public Set<Object> keySet() {
-            return IndexedImmutableSetImpl.empty();
+            return ImmutableSetImpl.empty();
         }
 
         @Override
         public Collection<Object> values() {
-            return IndexedImmutableSetImpl.empty();
+            return ImmutableSetImpl.empty();
         }
 
         @Override

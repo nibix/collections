@@ -119,7 +119,7 @@ public class IndexedImmutableSetTest {
                 }
             }
 
-            IndexedImmutableSetImpl<String> subject = IndexedImmutableSetImpl.of(reference);
+            IndexedImmutableSet<String> subject = IndexedImmutableSet.of(reference);
 
             assertEquals(reference, subject);
             Collections.shuffle(referenceList, random);
@@ -158,7 +158,7 @@ public class IndexedImmutableSetTest {
                 reference.add(string);
             }
 
-            IndexedImmutableSetImpl<String> subject = IndexedImmutableSetImpl.of(reference);
+            IndexedImmutableSet<String> subject = IndexedImmutableSet.of(reference);
 
             assertEquals(reference, subject);
             Assert.assertEquals(reference.size(), subject.size());
@@ -192,7 +192,7 @@ public class IndexedImmutableSetTest {
                 }
             }
 
-            IndexedImmutableSetImpl<String> subject = IndexedImmutableSetImpl.of(reference.keySet());
+            IndexedImmutableSet<String> subject = IndexedImmutableSet.of(reference.keySet());
 
             assertEquals(reference.keySet(), subject);
 
@@ -243,7 +243,7 @@ public class IndexedImmutableSetTest {
             }
 
             HashSet<String> reference = new HashSet<>(initialContent);
-            IndexedImmutableSetImpl<String> subject = IndexedImmutableSetImpl.of(reference);
+            IndexedImmutableSet<String> subject = IndexedImmutableSet.of(reference);
 
             assertEquals(reference, subject);
 
@@ -274,7 +274,7 @@ public class IndexedImmutableSetTest {
             }
 
             HashSet<String> reference = new HashSet<>(initialContent);
-            IndexedImmutableSetImpl<String> subject = IndexedImmutableSetImpl.of(reference);
+            IndexedImmutableSet<String> subject = IndexedImmutableSet.of(reference);
 
             Assert.assertEquals(reference, subject);
             Assert.assertEquals(reference.hashCode(), subject.hashCode());
@@ -343,17 +343,17 @@ public class IndexedImmutableSetTest {
 
         @Test
         public void of_self() {
-            IndexedImmutableSetImpl<String> set1 = IndexedImmutableSetImpl.of("a");
-            IndexedImmutableSetImpl<String> set2 = IndexedImmutableSetImpl.of(set1);
+            IndexedImmutableSet<String> set1 = IndexedImmutableSet.of("a");
+            IndexedImmutableSet<String> set2 = IndexedImmutableSet.of(set1);
 
             Assert.assertEquals(set1, set2);
         }
 
         @Test
         public void of_same() {
-            IndexedImmutableSetImpl<String> set1 = IndexedImmutableSetImpl.of("a", "a");
+            IndexedImmutableSet<String> set1 = IndexedImmutableSet.of("a", "a");
             Assert.assertEquals(1, set1.size());
-            Assert.assertEquals(IndexedImmutableSetImpl.of("a"), set1);
+            Assert.assertEquals(IndexedImmutableSet.of("a"), set1);
         }
 
         @Test(expected = IllegalArgumentException.class)
@@ -368,7 +368,7 @@ public class IndexedImmutableSetTest {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
                     IndexedImmutableSetImpl.<String>builder(10).with("a");
 
-            Assert.assertEquals(IndexedImmutableSetImpl.of("a"), builder.build());
+            Assert.assertEquals(IndexedImmutableSet.of("a"), builder.build());
         }
 
         @Test
@@ -376,7 +376,7 @@ public class IndexedImmutableSetTest {
             IndexedImmutableSetImpl.InternalBuilder<String> builder =
                     IndexedImmutableSetImpl.<String>builder(10).with("a").with("b");
 
-            Assert.assertEquals(IndexedImmutableSetImpl.of("a", "b"), builder.build());
+            Assert.assertEquals(IndexedImmutableSet.of("a", "b"), builder.build());
         }
 
         @Test
@@ -418,13 +418,23 @@ public class IndexedImmutableSetTest {
 
         @Test(expected = IllegalArgumentException.class)
         public void of3_null() {
-            IndexedImmutableSetImpl.of(new HashSet<>(Arrays.asList("a", "b", null)));
+            IndexedImmutableSet.of(new HashSet<>(Arrays.asList("a", "b", null)));
+        }
+
+        @Test
+        public void empty() {
+            ImmutableSetImpl<String> set1 = ImmutableSetImpl.empty();
+            Assert.assertEquals(0, set1.size());
+            Assert.assertFalse(set1.contains("a"));
+            Assert.assertFalse(set1.iterator().hasNext());
+            Assert.assertEquals(0, set1.toArray().length);
+            Assert.assertEquals(0, set1.toArray(new String[0]).length);
         }
     }
 
     @RunWith(Parameterized.class)
     public static class ParameterizedTest {
-        final IndexedImmutableSetImpl<String> subject;
+        final IndexedImmutableSet<String> subject;
         final Set<String> reference;
 
         @Test
@@ -559,7 +569,7 @@ public class IndexedImmutableSetTest {
             iter.next();
         }
 
-        public ParameterizedTest(Set<String> reference, IndexedImmutableSetImpl<String> subject) {
+        public ParameterizedTest(Set<String> reference, IndexedImmutableSet<String> subject) {
             this.subject = subject;
             this.reference = reference;
         }
@@ -572,31 +582,31 @@ public class IndexedImmutableSetTest {
             result.add(new Object[] {
                 new HashSet<>(), IndexedImmutableSetImpl.builder(10).build()
             });
-            result.add(new Object[] {new HashSet<>(Arrays.asList("a")), IndexedImmutableSetImpl.of("a")});
-            result.add(new Object[] {new HashSet<>(Arrays.asList("a", "b")), IndexedImmutableSetImpl.of("a", "b")});
+            result.add(new Object[] {new HashSet<>(Arrays.asList("a")), IndexedImmutableSet.of("a")});
+            result.add(new Object[] {new HashSet<>(Arrays.asList("a", "b")), IndexedImmutableSet.of("a", "b")});
             result.add(new Object[] {
                 new HashSet<>(Arrays.asList("a", "b", "c")),
-                IndexedImmutableSetImpl.of(new HashSet<>(Arrays.asList("a", "b", "c")))
+                IndexedImmutableSet.of(new HashSet<>(Arrays.asList("a", "b", "c")))
             });
             result.add(new Object[] {
                 new HashSet<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l")),
-                IndexedImmutableSetImpl.of(
+                IndexedImmutableSet.of(
                         new HashSet<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l")))
             });
-            Set<String> set1000 = stringSet(1000);
-            result.add(new Object[] {set1000, IndexedImmutableSetImpl.of(set1000)});
-            Set<String> set2000 = stringSet(2000);
-            result.add(new Object[] {set2000, IndexedImmutableSetImpl.of(set2000)});
-            Set<String> set3000 = stringSet(3000);
-            result.add(new Object[] {set3000, IndexedImmutableSetImpl.of(set3000)});
-            Set<String> set4000 = stringSet(4000);
-            result.add(new Object[] {set4000, IndexedImmutableSetImpl.of(set4000)});
-            Set<String> set5000 = stringSet(5000);
-            result.add(new Object[] {set5000, IndexedImmutableSetImpl.of(set5000)});
-            Set<String> set16000 = stringSet(16000);
-            result.add(new Object[] {set16000, IndexedImmutableSetImpl.of(set16000)});
-            Set<String> set33000 = stringSet(33000);
-            result.add(new Object[] {set33000, IndexedImmutableSetImpl.of(set33000)});
+            Set<String> set1000 = TestUtils.stringSet(1000);
+            result.add(new Object[] {set1000, IndexedImmutableSet.of(set1000)});
+            Set<String> set2000 = TestUtils.stringSet(2000);
+            result.add(new Object[] {set2000, IndexedImmutableSet.of(set2000)});
+            Set<String> set3000 = TestUtils.stringSet(3000);
+            result.add(new Object[] {set3000, IndexedImmutableSet.of(set3000)});
+            Set<String> set4000 = TestUtils.stringSet(4000);
+            result.add(new Object[] {set4000, IndexedImmutableSet.of(set4000)});
+            Set<String> set5000 = TestUtils.stringSet(5000);
+            result.add(new Object[] {set5000, IndexedImmutableSet.of(set5000)});
+            Set<String> set16000 = TestUtils.stringSet(16000);
+            result.add(new Object[] {set16000, IndexedImmutableSet.of(set16000)});
+            Set<String> set33000 = TestUtils.stringSet(33000);
+            result.add(new Object[] {set33000, IndexedImmutableSet.of(set33000)});
 
             return result;
         }
@@ -645,7 +655,7 @@ public class IndexedImmutableSetTest {
         }
     }
 
-    private static <E> void assertEquals(Set<E> expected, IndexedImmutableSetImpl<E> actual) {
+    private static <E> void assertEquals(Set<E> expected, IndexedImmutableSet<E> actual) {
         for (E e : expected) {
             if (!actual.contains(e)) {
                 Assert.fail("Not found in actual: "
