@@ -9,11 +9,11 @@
   </parent>
 
   <groupId>com.selectivem.collections</groupId>
-  <artifactId>compact-maps</artifactId>
+  <artifactId>indexed-set</artifactId>
   <version>${revision}</version>
   <packaging>jar</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
-  <description>Map implementations that allow heap-efficient maps where the keys a sub-sets of other sets</description>
+  <description>An immutable hash set implementation which assigns ordinal numbers to its member elements</description>
   <url>https://github.com/nibix/collections</url>
 
   <licenses>
@@ -49,22 +49,10 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.release>8</maven.compiler.release>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>com.selectivem.collections</groupId>
       <artifactId>backing-collections</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.selectivem.collections</groupId>
-      <artifactId>indexed-set</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

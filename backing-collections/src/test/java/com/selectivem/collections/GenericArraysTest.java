@@ -47,4 +47,18 @@ public class GenericArraysTest {
         Object[] mapped = GenericArrays.mapInPlace(null, null);
         Assert.assertTrue(mapped == null);
     }
+
+    @Test
+    public void copyAsObjectArray() {
+        String [] array = new String [] {"a"};
+        Object [] copy = GenericArrays.copyAsObjectArray(array);
+        Assert.assertArrayEquals(new Object[] {"a"}, copy);
+    }
+
+    @Test
+    public void extend() {
+        Object [] array = new Object [] {"a"};
+        Object [] extended = GenericArrays.extend(array, 2);
+        Assert.assertArrayEquals(new Object [] {"a", null}, extended);
+    }
 }

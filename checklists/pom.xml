@@ -62,6 +62,11 @@
       <artifactId>backing-collections</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.selectivem.collections</groupId>
+      <artifactId>indexed-set</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
 </project>

@@ -3,12 +3,7 @@
 /.classpath
 /.settings/
 /settings.xml
-/checklists/target/
-/backing-collections/target/
-/compact-subsets/target/
-/interfaces/target/
+/**/target/
 /.idea/
-/compact-maps/target/
-/special-collections-complete/target/
 /special-collections-complete/dependency-reduced-pom.xml
 /**/.flattened-pom.xml

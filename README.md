@@ -32,7 +32,7 @@ a check table to tick off what privileges are present and which are not present.
 <dependency>
     <groupId>com.selectivem.collections</groupId>
     <artifactId>checklists</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
@@ -47,7 +47,7 @@ bitfields, thus they can be extremely space efficient. Efficient deduplication o
 <dependency>
     <groupId>com.selectivem.collections</groupId>
     <artifactId>compact-subsets</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
@@ -62,7 +62,23 @@ share their key hash tables and only explicitly specify the value tables. Thus, 
 <dependency>
     <groupId>com.selectivem.collections</groupId>
     <artifactId>compact-maps</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
+</dependency>
+```
+
+## indexed-set
+
+An immutable set implementation which assigns ordinal numbers to its member elements. It exposes the
+methods `elementToIndex()` and `indexToElement()` which provide fast O(1) means to convert an element to its index and 
+vice-versa. This implementation is used internally by `checklists`, `compact-subsets` and `compact-maps`.
+
+### Maven dependency
+
+```
+<dependency>
+    <groupId>com.selectivem.collections</groupId>
+    <artifactId>indexed-set</artifactId>
+    <version>1.4.0</version>
 </dependency>
 ```
 
@@ -76,7 +92,7 @@ Bare specialized Java interfaces for collections. Includes `UnmodifiableCollecti
 <dependency>
     <groupId>com.selectivem.collections</groupId>
     <artifactId>interfaces</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 

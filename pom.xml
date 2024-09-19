@@ -31,6 +31,7 @@
     <module>checklists</module>
     <module>compact-subsets</module>
     <module>compact-maps</module>
+    <module>indexed-set</module>
     <module>backing-collections</module>
     <module>special-collections-complete</module>
   </modules>
