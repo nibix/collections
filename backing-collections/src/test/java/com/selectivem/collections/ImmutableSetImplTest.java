@@ -16,6 +16,7 @@
 
 package com.selectivem.collections;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import org.junit.Assert;
@@ -46,6 +47,9 @@ public class ImmutableSetImplTest {
             Assert.assertEquals("a", set1.iterator().next());
             Assert.assertEquals(1, set1.toArray().length);
             Assert.assertEquals(1, set1.toArray(new String[0]).length);
+            Assert.assertTrue(set1.containsAll(ImmutableSetImpl.of("a")));
+            Assert.assertFalse(set1.containsAll(ImmutableSetImpl.of("a", "b")));
+
         }
 
         @Test(expected = NoSuchElementException.class)
@@ -106,5 +110,37 @@ public class ImmutableSetImplTest {
             iter.next();
             iter.next();
         }
+
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void add() {
+            ImmutableSetImpl.of("a", "b").add("x");
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void addAll() {
+            ImmutableSetImpl.of("a", "b").addAll(Arrays.asList("x"));
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void clear() {
+            ImmutableSetImpl.of("a", "b").clear();
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void remove() {
+            ImmutableSetImpl.of("a", "b").remove("x");
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void removeAll() {
+            ImmutableSetImpl.of("a", "b").removeAll(Arrays.asList("x"));
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void retainAll() {
+            ImmutableSetImpl.of("a", "b").retainAll(Arrays.asList("x"));
+        }
+
     }
 }

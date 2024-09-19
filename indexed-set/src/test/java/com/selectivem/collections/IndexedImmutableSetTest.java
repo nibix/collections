@@ -423,12 +423,13 @@ public class IndexedImmutableSetTest {
 
         @Test
         public void empty() {
-            ImmutableSetImpl<String> set1 = ImmutableSetImpl.empty();
+            IndexedImmutableSet<String> set1 = IndexedImmutableSet.empty();
             Assert.assertEquals(0, set1.size());
             Assert.assertFalse(set1.contains("a"));
             Assert.assertFalse(set1.iterator().hasNext());
             Assert.assertEquals(0, set1.toArray().length);
             Assert.assertEquals(0, set1.toArray(new String[0]).length);
+            Assert.assertTrue(set1.isEmpty());
         }
     }
 
@@ -477,6 +478,7 @@ public class IndexedImmutableSetTest {
         @Test
         public void indexToElement_notExists() {
             Assert.assertNull(subject.indexToElement(99999));
+            Assert.assertNull(subject.indexToElement(-1));
         }
 
         @Test
@@ -520,6 +522,7 @@ public class IndexedImmutableSetTest {
             IndexedImmutableSetImpl.InternalBuilder<String> builder = IndexedImmutableSetImpl.builder(10);
 
             for (String e : reference) {
+                Assert.assertFalse(builder.contains(e));
                 builder = builder.with(e);
                 Assert.assertTrue(builder.contains(e));
             }
