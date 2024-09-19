@@ -58,20 +58,6 @@ class SimpleTestData {
             }
         }
 
-        for (char c1 = 'a'; c1 <= 'z'; c1++) {
-            for (char c2 = 'a'; c2 <= 'z'; c2++) {
-                for (char c3 = 'a'; c3 <= 'z'; c3++) {
-                    for (char c4 = 'a'; c4 <= 'z'; c4++) {
-                        result.add(String.valueOf(c1) + c2 + c3 + c4);
-
-                        if (result.size() >= size) {
-                            return result;
-                        }
-                    }
-                }
-            }
-        }
-
         return result;
     }
 

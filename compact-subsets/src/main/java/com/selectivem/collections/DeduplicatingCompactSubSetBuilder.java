@@ -84,7 +84,7 @@ public class DeduplicatingCompactSubSetBuilder<E> {
                     "Element " + candidateElement + " is not part of super set " + this.candidateElements);
         }
 
-        if (currentElementIndex <= this.currentElementIndex) {
+        if (this.currentElement != null && currentElementIndex <= this.currentElementIndex) {
             throw new IllegalArgumentException(
                     "Element " + candidateElement + " comes in the iteration order of the super set before "
                             + this.currentElement + " (" + currentElementIndex + " < " + this.currentElementIndex + ");"
