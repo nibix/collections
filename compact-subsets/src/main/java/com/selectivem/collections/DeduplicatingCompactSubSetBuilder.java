@@ -74,6 +74,9 @@ public class DeduplicatingCompactSubSetBuilder<E> {
      * You can however skip elements completely.
      */
     public void next(E candidateElement) {
+        E prevElement = this.currentElement;
+        int prevElementIndex = this.currentElementIndex;
+
         if (this.currentElement != null) {
             this.finishCurrentElement();
         }
@@ -84,10 +87,10 @@ public class DeduplicatingCompactSubSetBuilder<E> {
                     "Element " + candidateElement + " is not part of super set " + this.candidateElements);
         }
 
-        if (this.currentElement != null && currentElementIndex <= this.currentElementIndex) {
+        if (prevElement != null && currentElementIndex <= prevElementIndex) {
             throw new IllegalArgumentException(
                     "Element " + candidateElement + " comes in the iteration order of the super set before "
-                            + this.currentElement + " (" + currentElementIndex + " < " + this.currentElementIndex + ");"
+                            + prevElement + " (" + currentElementIndex + " < " + prevElementIndex + ");"
                             + "You must follow the iteration order of the super set specified in the constructor.");
         }
 
