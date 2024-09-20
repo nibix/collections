@@ -118,4 +118,31 @@ public class BitBackedSetImplTest {
 
         iter.next();
     }
+
+    @Test
+    public void iterator_trailingZeros() {
+        BitBackedSetImpl.LongArrayBacked<String> subject =
+                new BitBackedSetImpl.LongArrayBacked<>(new long[] {1, 0}, 0, IndexedImmutableSetImpl.of("a", "b"), 0);
+        Iterator<String> iter = subject.iterator();
+
+        while (iter.hasNext()) {
+            Assert.assertEquals("a", iter.next());
+        }
+    }
+
+    @Test
+    public void equals_arrayBacked_differentBackingMap() {
+        IndexedImmutableSetImpl s1 = IndexedImmutableSetImpl.of("a", "b");
+        IndexedImmutableSetImpl s2 = IndexedImmutableSetImpl.of("a", "b");
+        IndexedImmutableSetImpl s3 = IndexedImmutableSetImpl.of("c", "d");
+
+        BitBackedSetImpl.LongArrayBacked<String> b1a = new BitBackedSetImpl.LongArrayBacked<>(new long[] {1}, 1, s1, 0);
+        BitBackedSetImpl.LongArrayBacked<String> b1b = new BitBackedSetImpl.LongArrayBacked<>(new long[] {1}, 1, s1, 0);
+        BitBackedSetImpl.LongArrayBacked<String> b2 = new BitBackedSetImpl.LongArrayBacked<>(new long[] {1}, 1, s2, 0);
+        BitBackedSetImpl.LongArrayBacked<String> b3 = new BitBackedSetImpl.LongArrayBacked<>(new long[] {1}, 1, s3, 0);
+
+        Assert.assertTrue(b1a.equals(b1b));
+        Assert.assertTrue(b1a.equals(b2));
+        Assert.assertFalse(b1a.equals(b3));
+    }
 }

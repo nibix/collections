@@ -50,15 +50,50 @@ public class GenericArraysTest {
 
     @Test
     public void copyAsObjectArray() {
-        String [] array = new String [] {"a"};
-        Object [] copy = GenericArrays.copyAsObjectArray(array);
+        String[] array = new String[] {"a"};
+        Object[] copy = GenericArrays.copyAsObjectArray(array);
         Assert.assertArrayEquals(new Object[] {"a"}, copy);
     }
 
     @Test
+    public void copyAsObjectArray_size() {
+        String[] array = new String[] {"a"};
+        Object[] copy = GenericArrays.copyAsObjectArray(array, 2);
+        Assert.assertArrayEquals(new Object[] {"a", null}, copy);
+    }
+
+    @Test
+    public void copyAsTypedArray_emptyTypedArray() {
+        String[] array = new String[] {"a"};
+        String[] copy = GenericArrays.copyAsTypedArray(array, new String[0]);
+        Assert.assertArrayEquals(new String[] {"a"}, copy);
+    }
+
+    @Test
+    public void copyAsTypedArray_nonEmptyTypedArray() {
+        String[] array = new String[] {"a"};
+        String[] copy = GenericArrays.copyAsTypedArray(array, new String[1]);
+        Assert.assertArrayEquals(new String[] {"a"}, copy);
+    }
+
+    @Test
+    public void copyAsTypedArray_emptyTypedArray_size() {
+        String[] array = new String[] {"a"};
+        String[] copy = GenericArrays.copyAsTypedArray(array, new String[0], 2);
+        Assert.assertArrayEquals(new String[] {"a", null}, copy);
+    }
+
+    @Test
+    public void copyAsTypedArray_nonEmptyTypedArray_size() {
+        String[] array = new String[] {"a"};
+        String[] copy = GenericArrays.copyAsTypedArray(array, new String[2], 2);
+        Assert.assertArrayEquals(new String[] {"a", null}, copy);
+    }
+
+    @Test
     public void extend() {
-        Object [] array = new Object [] {"a"};
-        Object [] extended = GenericArrays.extend(array, 2);
-        Assert.assertArrayEquals(new Object [] {"a", null}, extended);
+        Object[] array = new Object[] {"a"};
+        Object[] extended = GenericArrays.extend(array, 2);
+        Assert.assertArrayEquals(new Object[] {"a", null}, extended);
     }
 }

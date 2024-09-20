@@ -53,12 +53,12 @@ class GenericArrays {
     }
 
     @SuppressWarnings("unchecked")
-    static <E, T> T[] copyAsTypedArray(E[] source, T[] target, int size) {
-        T[] result = target.length >= size
+    static <E, T> T[] copyAsTypedArray(E[] source, T[] target, int newSize) {
+        T[] result = target.length >= newSize
                 ? target
-                : (T[]) java.lang.reflect.Array.newInstance(target.getClass().getComponentType(), size);
+                : (T[]) java.lang.reflect.Array.newInstance(target.getClass().getComponentType(), newSize);
 
-        System.arraycopy(source, 0, result, 0, size);
+        System.arraycopy(source, 0, result, 0, Math.min(source.length, newSize));
         return result;
     }
 

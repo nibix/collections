@@ -33,78 +33,75 @@ abstract class ImmutableCompactSubSetImpl {
     static <E> ImmutableCompactSubSet<E> of(UnmodifiableSet<E> delegate) {
         if (delegate instanceof ImmutableCompactSubSet) {
             return (ImmutableCompactSubSet<E>) delegate;
+        } else {
+            return new DelegatingImpl<>(delegate);
+        }
+    }
+
+    static class DelegatingImpl<E> extends UnmodifiableSetImpl<E> implements ImmutableCompactSubSet<E> {
+        private final UnmodifiableSet<E> delegate;
+
+        DelegatingImpl(UnmodifiableSet<E> delegate) {
+            this.delegate = delegate;
         }
 
-        return new ImmutableCompactSubSet<E>() {
+        public int size() {
+            return delegate.size();
+        }
 
-            public boolean containsAny(Collection<E> elements) {
-                for (E e : elements) {
-                    if (contains(e)) {
-                        return true;
-                    }
-                }
+        public boolean isEmpty() {
+            return delegate.isEmpty();
+        }
 
-                return false;
-            }
+        public boolean contains(Object o) {
+            return delegate.contains(o);
+        }
 
-            public int size() {
-                return delegate.size();
-            }
+        public Iterator<E> iterator() {
+            return delegate.iterator();
+        }
 
-            public boolean isEmpty() {
-                return delegate.isEmpty();
-            }
+        public Object[] toArray() {
+            return delegate.toArray();
+        }
 
-            public boolean contains(Object o) {
-                return delegate.contains(o);
-            }
+        public <T> T[] toArray(T[] a) {
+            return delegate.toArray(a);
+        }
 
-            public Iterator<E> iterator() {
-                return delegate.iterator();
-            }
+        @Override
+        public boolean equals(Object o) {
+            return delegate.equals(o);
+        }
 
-            public Object[] toArray() {
-                return delegate.toArray();
-            }
+        public boolean containsAll(Collection<?> c) {
+            return delegate.containsAll(c);
+        }
 
-            public <T> T[] toArray(T[] a) {
-                return delegate.toArray(a);
-            }
+        @Override
+        public int hashCode() {
+            return delegate.hashCode();
+        }
 
-            @Override
-            public boolean equals(Object o) {
-                return delegate.equals(o);
-            }
+        public Spliterator<E> spliterator() {
+            return delegate.spliterator();
+        }
 
-            public boolean containsAll(Collection<?> c) {
-                return delegate.containsAll(c);
-            }
+        public Stream<E> parallelStream() {
+            return delegate.parallelStream();
+        }
 
-            @Override
-            public int hashCode() {
-                return delegate.hashCode();
-            }
+        public Stream<E> stream() {
+            return delegate.stream();
+        }
 
-            public Spliterator<E> spliterator() {
-                return delegate.spliterator();
-            }
+        public void forEach(Consumer<? super E> action) {
+            delegate.forEach(action);
+        }
 
-            public Stream<E> parallelStream() {
-                return delegate.parallelStream();
-            }
-
-            public Stream<E> stream() {
-                return delegate.stream();
-            }
-
-            public void forEach(Consumer<? super E> action) {
-                delegate.forEach(action);
-            }
-
-            @Override
-            public String toString() {
-                return delegate.toString();
-            }
-        };
+        @Override
+        public String toString() {
+            return delegate.toString();
+        }
     }
 }
