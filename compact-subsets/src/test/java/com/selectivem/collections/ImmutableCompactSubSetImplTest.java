@@ -17,8 +17,11 @@ package com.selectivem.collections;
 
 import static com.selectivem.collections.SimpleTestData.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -46,6 +49,16 @@ public class ImmutableCompactSubSetImplTest {
         Assert.assertEquals(instance1.toString(), instance2.toString());
         Assert.assertEquals(instance1.isEmpty(), instance2.isEmpty());
         Assert.assertArrayEquals(instance1.toArray(), instance2.toArray());
+    }
+
+    @Test
+    public void of_containsAny() {
+        ImmutableCompactSubSet<String> subject =
+                ImmutableCompactSubSetImpl.of(IndexedImmutableSetImpl.of(setOf("a", "b", "c", "d")));
+
+        Assert.assertTrue(subject.containsAny(setOf("c", "d")));
+        Assert.assertTrue(subject.containsAny(setOf("e", "c", "d")));
+        Assert.assertFalse(subject.containsAny(setOf("e", "f")));
     }
 
     @Test
@@ -139,6 +152,11 @@ public class ImmutableCompactSubSetImplTest {
             public Spliterator<String> spliterator() {
                 return testSpliterator;
             }
+
+            @Override
+            public void forEach(Consumer<? super String> action) {
+                action.accept("for_each_test_value");
+            }
         };
 
         ImmutableCompactSubSet<String> subject = ImmutableCompactSubSetImpl.of(delegate);
@@ -151,5 +169,8 @@ public class ImmutableCompactSubSetImplTest {
         Assert.assertSame(delegate.parallelStream(), subject.parallelStream());
         Assert.assertSame(delegate.stream(), subject.stream());
         Assert.assertSame(delegate.spliterator(), subject.spliterator());
+        List<String> forEachSink = new ArrayList<>();
+        subject.forEach((s) -> forEachSink.add(s));
+        Assert.assertEquals(Arrays.asList("for_each_test_value"), forEachSink);
     }
 }

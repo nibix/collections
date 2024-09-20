@@ -57,13 +57,13 @@ abstract class UnmodifiableSetImpl<E> extends AbstractSet<E> implements Unmodifi
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public boolean containsAll(Collection<?> collection) {
-        for (Object o : collection) {
-            if (!contains(o)) {
-                return false;
+    public boolean containsAny(Collection<E> elements) {
+        for (E e : elements) {
+            if (contains(e)) {
+                return true;
             }
         }
-        return true;
+
+        return false;
     }
 }
