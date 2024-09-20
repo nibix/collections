@@ -1,4 +1,5 @@
 [![codecov](https://codecov.io/gh/nibix/collections/graph/badge.svg?token=IE4URKDA1A)](https://codecov.io/gh/nibix/collections)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e480bef562a14553a3ef60921e547699)](https://app.codacy.com/gh/nibix/collections?utm_source=github.com&utm_medium=referral&utm_content=nibix/collections&utm_campaign=Badge_Grade)
 
 # com.selectiveminimalism.collections
 
