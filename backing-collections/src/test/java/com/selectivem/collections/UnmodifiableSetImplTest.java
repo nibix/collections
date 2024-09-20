@@ -93,16 +93,6 @@ public class UnmodifiableSetImplTest {
         }
 
         @Override
-        public boolean add(E e) {
-            return delegate.add(e);
-        }
-
-        @Override
-        public boolean addAll(Collection<? extends E> c) {
-            return delegate.addAll(c);
-        }
-
-        @Override
         public Stream<E> stream() {
             return delegate.stream();
         }
