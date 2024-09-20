@@ -129,8 +129,6 @@
             <include>**/*.java</include>
           </includes>
           <trimStackTrace>false</trimStackTrace>
-          <parallel>classes</parallel>
-          <threadCount>4</threadCount>
         </configuration>
       </plugin>
       <plugin>
