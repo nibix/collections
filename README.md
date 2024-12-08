@@ -7,7 +7,7 @@ Specialized efficient data structures for Java
 
 ## checklists
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.selectivem.collections/checklists)](https://mvnrepository.com/artifact/com.selectivem/checklists)
+[![Maven Central](https://img.shields.io/maven-central/v/com.selectivem.collections/checklists)](https://mvnrepository.com/artifact/com.selectivem.collections/checklists)
 
 Dedicated check list and check table data structures.
 
@@ -31,21 +31,21 @@ a check table to tick off what privileges are present and which are not present.
 
 ## compact-subsets
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.selectivem.collections/compact-subsets)](https://mvnrepository.com/artifact/com.selectivem/compact-subsets)
+[![Maven Central](https://img.shields.io/maven-central/v/com.selectivem.collections/compact-subsets)](https://mvnrepository.com/artifact/com.selectivem.collections/compact-subsets)
 
 Builder classes that allow you to create sub-sets of existing `Set<>` objects in Java. The sub-sets are represented by 
 bitfields, thus they can be extremely space efficient. Efficient deduplication of equal sub-sets is also possible.
 
 ## compact-maps
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.selectivem.collections/compact-maps)](https://mvnrepository.com/artifact/com.selectivem/compact-maps)
+[![Maven Central](https://img.shields.io/maven-central/v/com.selectivem.collections/compact-maps)](https://mvnrepository.com/artifact/com.selectivem.collections/compact-maps)
 
 Builder classes that allow you to create groups of maps that share a common super-set of keys. The produced maps may
 share their key hash tables and only explicitly specify the value tables. Thus, these maps take about 50% less heap than normal maps.
 
 ## indexed-set
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.selectivem.collections/indexed-set)](https://mvnrepository.com/artifact/com.selectivem/indexed-set)
+[![Maven Central](https://img.shields.io/maven-central/v/com.selectivem.collections/indexed-set)](https://mvnrepository.com/artifact/com.selectivem.collections/indexed-set)
 
 An immutable set implementation which assigns ordinal numbers to its member elements. It exposes the
 methods `elementToIndex()` and `indexToElement()` which provide fast O(1) means to convert an element to its index and 
@@ -53,7 +53,7 @@ vice-versa. This implementation is used internally by `checklists`, `compact-sub
 
 ## interfaces
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.selectivem.collections/interfaces)](https://mvnrepository.com/artifact/com.selectivem/interfaces)
+[![Maven Central](https://img.shields.io/maven-central/v/com.selectivem.collections/interfaces)](https://mvnrepository.com/artifact/com.selectivem.collections/interfaces)
 
 Bare specialized Java interfaces for collections. Includes `UnmodifiableCollection`, `UnmodifiableSet`, `UnmodifiableList`.
 
